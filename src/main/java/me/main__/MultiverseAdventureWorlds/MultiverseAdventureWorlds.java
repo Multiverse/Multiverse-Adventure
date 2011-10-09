@@ -13,6 +13,7 @@ import me.main__.MultiverseAdventureWorlds.listeners.MVAWConfigReloadListener;
 import me.main__.MultiverseAdventureWorlds.listeners.MVAWPlayerListener;
 import me.main__.MultiverseAdventureWorlds.listeners.MVAWPluginListener;
 import me.main__.MultiverseAdventureWorlds.listeners.MVAWWorldListener;
+import me.main__.MultiverseAdventureWorlds.util.FileUtils;
 
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -22,9 +23,9 @@ import org.bukkit.util.config.ConfigurationNode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import com.onarandombox.MultiverseCore.MVWorld;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVPlugin;
+import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import com.onarandombox.MultiverseCore.commands.HelpCommand;
 import com.onarandombox.MultiverseCore.utils.DebugLog;
 import com.pneumaticraft.commandhandler.CommandHandler;
@@ -147,7 +148,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	 * Iterates through all loaded MVWorlds and enables AdventureWorlds
 	 */
 	public void loadWorlds() {
-		for (MVWorld world : this.getCore().getMVWorldManager().getMVWorlds()) {
+		for (MultiverseWorld world : this.getCore().getMVWorldManager().getMVWorlds()) {
         	tryEnableWorld(world.getName());
         }
 	}
@@ -183,7 +184,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	 * True if success, false if failed.
 	 */
 	public boolean tryEnableWorld(String name, boolean noreset) {
-		MVWorld mvworld;
+		MultiverseWorld mvworld;
 		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAWConfig.getKeys("adventureworlds") != null) && this.MVAWConfig.getKeys("adventureworlds").contains(name)) {
 			ConfigurationNode node = this.MVAWConfig.getNode("adventureworlds." + name);
 			boolean enabled = this.MVAWConfig.getBoolean("adventureworlds." + name + ".enabled", true);
@@ -213,10 +214,17 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 		return false;
 	}
 	
+	/**
+	 * Converts a normal world into an AdventureWorld
+	 * @param name
+	 * The name of the world
+	 * @return
+	 * True if success, false if failed.
+	 */
 	public boolean createWorld(String name) {
 		//first write it to the config, then load
 		this.MVAWConfig.setProperty("adventureworlds." + name + ".enabled", true);
-		MVWorld mvworld;
+		MultiverseWorld mvworld;
 		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAWConfig.getKeys("adventureworlds") != null) && this.MVAWConfig.getKeys("adventureworlds").contains(name)) {
 			ConfigurationNode node = this.MVAWConfig.getNode("adventureworlds." + name);
 			boolean enabled = this.MVAWConfig.getBoolean("adventureworlds." + name + ".enabled", true);
@@ -230,11 +238,18 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 		return false;
 	}
 	
+	/**
+	 * Converts a normal world into an AdventureWorld and sends notifications to a CommandSender
+	 * @param name
+	 * The name of the world
+	 * @param sender
+	 * The CommandSender that receives the notifications
+	 */
 	public void createWorldWithNotifications(String name, CommandSender sender) {
 		sender.sendMessage("Converting world '" + name + "' into an AdventureWorld...");
 		//first write it to the config, then load
 		this.MVAWConfig.setProperty("adventureworlds." + name + ".enabled", true);
-		MVWorld mvworld;
+		MultiverseWorld mvworld;
 		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAWConfig.getKeys("adventureworlds") != null) && this.MVAWConfig.getKeys("adventureworlds").contains(name)) {
 			ConfigurationNode node = this.MVAWConfig.getNode("adventureworlds." + name);
 			boolean enabled = this.MVAWConfig.getBoolean("adventureworlds." + name + ".enabled", true);
@@ -245,6 +260,33 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 				return;
 			}
 		}
+	}
+	
+	/**
+	 * Converts an AdventureWorld back into a normal world.
+	 * @param name
+	 * The name of the world.
+	 */
+	public void deleteWorld(String name) {
+		String template;
+		if (this.getMVAWInfo(name) == null) {
+			//idiots.
+			return;
+		}
+		else {
+			template = this.getMVAWInfo(name).getTemplate();
+		}
+		
+		//reset, unload, modify the config and then load
+		this.getCore().getMVWorldManager().removePlayersFromWorld(name); // coming soon
+		this.getMVAWInfo(name).resetNow();
+		// TODO wait for reset finish
+		this.getCore().getMVWorldManager().unloadWorld(name);
+		this.MVAWConfig.removeProperty("adventureworlds." + name);
+		File serverFolder = new File(this.getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
+		File templateFile = new File(serverFolder, template);
+		FileUtils.deleteFolder(templateFile);
+		this.getCore().getMVWorldManager().loadWorld(name);
 	}
 	
 	private void createDefaultPerms() {
@@ -279,15 +321,21 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
      * @return String containing all the authors formatted correctly with ',' and 'and'.
      */
     private String getAuthors() {
-        String authors = "";
-        for (int i = 0; i < this.getDescription().getAuthors().size(); i++) {
-            if (i == this.getDescription().getAuthors().size() - 1) {
-                authors += " and " + this.getDescription().getAuthors().get(i);
-            } else {
-                authors += ", " + this.getDescription().getAuthors().get(i);
-            }
+        if (this.getDescription().getAuthors().size() > 1) {
+			String authors = "";
+			for (int i = 0; i < this.getDescription().getAuthors().size(); i++) {
+				if (i == this.getDescription().getAuthors().size() - 1) {
+					authors += " and "
+							+ this.getDescription().getAuthors().get(i);
+				} else {
+					authors += ", " + this.getDescription().getAuthors().get(i);
+				}
+			}
+			return authors.substring(2);
+		}
+        else {
+        	return this.getDescription().getAuthors().get(0); //in case it's just one author like here
         }
-        return authors.substring(2);
     }
 
 	@Override

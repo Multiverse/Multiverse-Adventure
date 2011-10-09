@@ -9,16 +9,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
-public class EnableCommand extends BaseCommand {
+public class DisableCommand extends BaseCommand {
 	
-	public EnableCommand(MultiverseAdventureWorlds plugin) {
+	public DisableCommand(MultiverseAdventureWorlds plugin) {
         super(plugin);
-        this.setName("Enable AdventureWorlds");
-        this.setCommandUsage("/mvaw enable " + ChatColor.GREEN + "[WORLD]");
+        this.setName("Disable AdventureWorlds");
+        this.setCommandUsage("/mvaw disable " + ChatColor.GREEN + "[WORLD]");
         this.setArgRange(0, 1);
-        this.addKey("mvaw enable");
-        this.addKey("mvawenable");
-        this.setPermission("multiverse.adventure.enable", "Converts a world into an AdventureWorld.", PermissionDefault.OP);
+        this.addKey("mvaw disable");
+        this.addKey("mvawdisable");
+        this.setPermission("multiverse.adventure.disable", "Converts an AdventureWorld back into a normal world.", PermissionDefault.OP);
     }
 
 	@Override
@@ -38,18 +38,18 @@ public class EnableCommand extends BaseCommand {
 		}
 		
 		//checks
-		if (plugin.getMVAWInfo(world) != null) {
-			sender.sendMessage("This world is already an AdventureWorld!");
-			return;
-		}
-		
 		if (plugin.getCore().getMVWorldManager().getMVWorld(world) == null) {
 			sender.sendMessage("That world doesn't exist!");
 			return;
 		}
 		
+		if (plugin.getMVAWInfo(world) == null) {
+			sender.sendMessage("This world is no AdventureWorld!");
+			return;
+		}
 		
-		plugin.createWorldWithNotifications(world, sender);
+		
+		plugin.deleteWorld(world);
 	}
 
 }

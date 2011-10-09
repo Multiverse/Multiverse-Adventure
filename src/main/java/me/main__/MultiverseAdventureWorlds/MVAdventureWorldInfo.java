@@ -9,7 +9,7 @@ import org.bukkit.util.config.ConfigurationNode;
 
 import me.main__.MultiverseAdventureWorlds.listeners.MVAWWorldListener;
 import me.main__.MultiverseAdventureWorlds.util.FileUtils;
-import com.onarandombox.MultiverseCore.MVWorld;
+import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 
 /**
  * Provides support for "adventure"-worlds
@@ -20,7 +20,7 @@ public final class MVAdventureWorldInfo {
 	 * Whether this AdventureWorld is "active" (contains players that have changed it)
 	 */
 	private boolean active;
-	private final MVWorld world;
+	private final MultiverseWorld world;
 	private final MultiverseAdventureWorlds plugin;
 	
 	/**
@@ -33,7 +33,7 @@ public final class MVAdventureWorldInfo {
 	private int resetTaskId;
 	private int activationTaskId;
 	
-	public MVAdventureWorldInfo(MVWorld world, MultiverseAdventureWorlds plugin, String template, int activationdelay, int resetdelay) {
+	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventureWorlds plugin, String template, int activationdelay, int resetdelay) {
 		this.world = world;
 		this.plugin = plugin;
 		active = false;
@@ -46,7 +46,7 @@ public final class MVAdventureWorldInfo {
 		activationTaskId = -1;
 	}
 	
-	public MVAdventureWorldInfo(MVWorld world, MultiverseAdventureWorlds plugin, ConfigurationNode config) {
+	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventureWorlds plugin, ConfigurationNode config) {
 		this.world = world;
 		this.plugin = plugin;
 		active = false;
@@ -84,7 +84,7 @@ public final class MVAdventureWorldInfo {
 		return plugin.getServer().getScheduler().isQueued(resetTaskId); // || plugin.getServer().getScheduler().isCurrentlyRunning(resetTaskId); We don't need to check this since the ResetPreparer runs in the main thread
 	}
 
-	public MVWorld getMVWorld() {
+	public MultiverseWorld getMVWorld() {
 		return world;
 	}
 
