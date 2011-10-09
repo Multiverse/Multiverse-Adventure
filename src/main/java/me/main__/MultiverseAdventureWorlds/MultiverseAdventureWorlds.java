@@ -42,7 +42,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
     private HashMap<String, MVAdventureWorldInfo> adventureWorlds;
 
     private Configuration MVAWConfig;
-    private final static int requiresProtocol = 4;
+    private final static int requiresProtocol = 5;
 
     public void onLoad() {
         instance = this;
