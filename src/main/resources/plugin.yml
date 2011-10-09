@@ -1,0 +1,18 @@
+name: Multiverse-AdventureWorlds
+main: me.main__.MultiverseAdventureWorlds.MultiverseAdventureWorlds
+author: main()
+version: 1.0
+depend: ['Multiverse-Core']
+commands:
+  mvaw:
+    description: Generic Multiverse-AdventureWorlds Command
+    usage: /<command>
+  mvawenable:
+    description: Generic Multiverse-AdventureWorlds Command
+    usage: /<command>
+  mvawmodify:
+    description: Generic Multiverse-AdventureWorlds Command
+    usage: /<command>
+  mvawdisable:
+    description: Generic Multiverse-AdventureWorlds Command
+    usage: /<command>
