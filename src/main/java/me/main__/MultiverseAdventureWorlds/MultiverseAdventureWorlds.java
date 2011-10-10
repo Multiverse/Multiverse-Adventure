@@ -8,15 +8,17 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import me.main__.MultiverseAdventureWorlds.commands.EnableCommand;
+import me.main__.MultiverseAdventureWorlds.commands.*;
 import me.main__.MultiverseAdventureWorlds.listeners.MVAWConfigReloadListener;
 import me.main__.MultiverseAdventureWorlds.listeners.MVAWPlayerListener;
 import me.main__.MultiverseAdventureWorlds.listeners.MVAWPluginListener;
+import me.main__.MultiverseAdventureWorlds.listeners.MVAWResetListener;
 import me.main__.MultiverseAdventureWorlds.listeners.MVAWWorldListener;
 import me.main__.MultiverseAdventureWorlds.util.FileUtils;
 
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
@@ -267,8 +269,19 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	 * @param name
 	 * The name of the world.
 	 */
-	public void deleteWorld(String name) {
-		String template;
+	public void deleteWorld(final String name) {
+		deleteWorld(name, null);
+	}
+	
+	/**
+	 * Converts an AdventureWorld back into a normal world and sends notifications to a CommandSender.
+	 * @param name
+	 * The name of the world.
+	 * @param sender
+	 * The CommandSender that receives notifications
+	 */
+	public void deleteWorld(final String name, final CommandSender sender) {
+		final String template;
 		if (this.getMVAWInfo(name) == null) {
 			//idiots.
 			return;
@@ -280,23 +293,73 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 		//reset, unload, modify the config and then load
 		this.getCore().getMVWorldManager().removePlayersFromWorld(name); // coming soon
 		this.getMVAWInfo(name).resetNow();
-		// TODO wait for reset finish
-		this.getCore().getMVWorldManager().unloadWorld(name);
-		this.MVAWConfig.removeProperty("adventureworlds." + name);
-		File serverFolder = new File(this.getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
-		File templateFile = new File(serverFolder, template);
-		FileUtils.deleteFolder(templateFile);
-		this.getCore().getMVWorldManager().loadWorld(name);
+
+		//Now use our task-system to do the rest when the reset is finished.
+		MVAWResetListener.addTask(name, new Runnable() {
+			public void run() {
+				getCore().getMVWorldManager().unloadWorld(name);
+				MVAWConfig.removeProperty("adventureworlds." + name);
+				File serverFolder = new File(getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
+				File templateFile = new File(serverFolder, template);
+				FileUtils.deleteFolder(templateFile);
+				getCore().getMVWorldManager().loadWorld(name);
+				
+				//notification
+				if (sender != null)
+					sender.sendMessage("Finished.");
+			}});
+		
+	}
+	
+	/**
+	 * Writes the current state of an AdventureWorld to the template.
+	 * @param name
+	 * The name of the world.
+	 */
+	public void flushWorld(String name) {
+		flushWorld(name, null);
+	}
+	
+	/**
+	 * Writes the current state of an AdventureWorld to the template and sends notifications to a CommandSender
+	 * @param name
+	 * The name of the world.
+	 * @param sender
+	 * The CommandSender that receives notifications
+	 * @return
+	 * True if success, false if failed.
+	 */
+	public boolean flushWorld(String name, CommandSender sender) {
+		if (this.getMVAWInfo(name) == null) {
+			//idiots.
+			return false;
+		}
+		else return this.getMVAWInfo(name).scheduleWriteTemplate(sender);
 	}
 	
 	private void createDefaultPerms() {
-		// TODO Auto-generated method stub
-		
+		if (this.getServer().getPluginManager().getPermission("multiverse.adventure.*") == null) {
+            Permission perm = new Permission("multiverse.adventure.*");
+            this.getServer().getPluginManager().addPermission(perm);
+        }
+        
+        try {
+			Permission all = this.getServer().getPluginManager().getPermission("multiverse.*");
+			all.getChildren().put("multiverse.adventure.*", true);
+			this.getServer().getPluginManager().recalculatePermissionDefaults(all);
+		} catch (NullPointerException e) {
+			// Because all could be null. multiverse.* is not our stuff so we don't touch it.
+			e.printStackTrace();
+		}
 	}
 
 	private void registerCommands() {
 		this.commandHandler = this.core.getCommandHandler();
-        this.commandHandler.registerCommand(new EnableCommand(this));
+		
+		this.commandHandler.registerCommand(new EnableCommand(this));
+        this.commandHandler.registerCommand(new DisableCommand(this));
+        this.commandHandler.registerCommand(new FlushCommand(this));
+        
         for (com.pneumaticraft.commandhandler.Command c : this.commandHandler.getAllCommands()) {
             if (c instanceof HelpCommand) {
                 c.addKey("mvaw");

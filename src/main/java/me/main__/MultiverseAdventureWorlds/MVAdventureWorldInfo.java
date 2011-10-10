@@ -7,6 +7,8 @@ import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.config.ConfigurationNode;
 
+import me.main__.MultiverseAdventureWorlds.event.MVAWResetEvent;
+import me.main__.MultiverseAdventureWorlds.event.MVAWResetFinishedEvent;
 import me.main__.MultiverseAdventureWorlds.listeners.MVAWWorldListener;
 import me.main__.MultiverseAdventureWorlds.util.FileUtils;
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
@@ -205,7 +207,7 @@ public final class MVAdventureWorldInfo {
 		
 		@Override
 		public void run() {
-			String name = world.getMVWorld().getName();
+			String name = world.getName();
 			String template = world.getTemplate();
 			
 			//check
@@ -216,6 +218,15 @@ public final class MVAdventureWorldInfo {
 			
 			plugin.log(Level.INFO, "Beginning reset of world '" + name + "'...");
 			
+			//now call the event
+			MVAWResetEvent resetEvent = new MVAWResetEvent(name);
+			plugin.getServer().getPluginManager().callEvent(resetEvent);
+			if (resetEvent.isCancelled()) {
+				plugin.log(Level.INFO, "Reset of world '" + name + "' cancelled.");
+				return;
+			}
+			
+			//everything is OK, let's start:
 			// 1. Unload it
 			plugin.getCore().getMVWorldManager().unloadWorld(name);
 			
@@ -280,8 +291,11 @@ public final class MVAdventureWorldInfo {
 			// 4. Load the world
 			MVAWWorldListener.addPass(name);
 			plugin.getCore().getMVWorldManager().loadWorld(name);
-			//plugin.tryEnableWorld(name, true);
+						
 			plugin.log(Level.INFO, "Reset of world '" + name + "' finished.");
+			
+			//call the event
+			plugin.getServer().getPluginManager().callEvent(new MVAWResetFinishedEvent(name));
 		}
 
 		public ResetFinisher(String name) {

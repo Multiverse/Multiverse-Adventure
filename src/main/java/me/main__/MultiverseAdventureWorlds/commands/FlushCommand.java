@@ -9,16 +9,22 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
-public class DisableCommand extends BaseCommand {
+public class FlushCommand extends BaseCommand {
 	
-	public DisableCommand(MultiverseAdventureWorlds plugin) {
+	public FlushCommand(MultiverseAdventureWorlds plugin) {
         super(plugin);
-        this.setName("Disable AdventureWorlds");
-        this.setCommandUsage("/mvaw disable " + ChatColor.GREEN + "[WORLD]");
+        this.setName("Write your changes to the template");
+        this.setCommandUsage("/mvaw write " + ChatColor.GREEN + "[WORLD]");
         this.setArgRange(0, 1);
-        this.addKey("mvaw disable");
-        this.addKey("mvawdisable");
-        this.setPermission("multiverse.adventure.disable", "Converts an AdventureWorld back into a normal world.", PermissionDefault.OP);
+        this.addKey("mvaw write");
+        this.addKey("mvawwrite");
+        this.addKey("mvaw write template");
+        this.addKey("mvaw writetemplate");
+        this.addKey("mvawwrite template");
+        this.addKey("mvawwritetemplate");
+        this.addKey("mvaw flush");
+        this.addKey("mvawflush");
+        this.setPermission("multiverse.adventure.flush", "Writes the the current state of an AdventureWorld to the template.", PermissionDefault.OP);
     }
 
 	@Override
@@ -48,8 +54,7 @@ public class DisableCommand extends BaseCommand {
 			return;
 		}
 		
-		
-		plugin.deleteWorld(world, sender);
+		plugin.flushWorld(world, sender);
 	}
 
 }
