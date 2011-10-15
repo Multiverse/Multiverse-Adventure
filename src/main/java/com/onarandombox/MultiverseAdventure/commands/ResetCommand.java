@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
+import com.onarandombox.MultiverseAdventure.listeners.MVAResetListener;
 
 public class ResetCommand extends BaseCommand {
 	
@@ -22,7 +23,7 @@ public class ResetCommand extends BaseCommand {
     }
 
 	@Override
-	public void runCommand(CommandSender sender, List<String> args) {
+	public void runCommand(final CommandSender sender, List<String> args) {
 		String world;
 		if (args.isEmpty()) {
 			if (sender instanceof Player) {
@@ -48,7 +49,12 @@ public class ResetCommand extends BaseCommand {
 			return;
 		}
 		
-		// TODO this
+		sender.sendMessage("Resetting world '" + world + "'...");
+		plugin.getAdventureWorldsManager().getMVAInfo(world).resetNow();
+		MVAResetListener.addTask(world, new Runnable() {
+			public void run() {
+				sender.sendMessage("Finished.");
+			}});
 	}
 
 }
