@@ -1,24 +1,31 @@
-package me.main__.MultiverseAdventure.commands;
+package com.onarandombox.MultiverseAdventure.commands;
 
 import java.util.List;
 
-import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
-public class DisableCommand extends BaseCommand {
+import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
+
+public class FlushCommand extends BaseCommand {
 	
-	public DisableCommand(MultiverseAdventure plugin) {
+	public FlushCommand(MultiverseAdventure plugin) {
         super(plugin);
-        this.setName("Disable Adventure");
-        this.setCommandUsage("/mva disable " + ChatColor.GREEN + "[WORLD]");
+        this.setName("Write your changes to the template");
+        this.setCommandUsage("/mvaw write " + ChatColor.GREEN + "[WORLD]");
         this.setArgRange(0, 1);
-        this.addKey("mva disable");
-        this.addKey("mvadisable");
-        this.setPermission("multiverse.adventure.disable", "Converts an adventure world back into a normal world.", PermissionDefault.OP);
+        this.addKey("mvaw write");
+        this.addKey("mvawwrite");
+        this.addKey("mvaw write template");
+        this.addKey("mvaw writetemplate");
+        this.addKey("mvawwrite template");
+        this.addKey("mvawwritetemplate");
+        this.addKey("mvaw flush");
+        this.addKey("mvawflush");
+        this.setPermission("multiverse.adventure.flush", "Writes the the current state of an AdventureWorld to the template.", PermissionDefault.OP);
     }
 
 	@Override
@@ -48,8 +55,7 @@ public class DisableCommand extends BaseCommand {
 			return;
 		}
 		
-		
-		plugin.deleteWorld(world, sender);
+		plugin.flushWorld(world, sender);
 	}
 
 }

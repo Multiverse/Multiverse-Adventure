@@ -1,10 +1,11 @@
-package me.main__.MultiverseAdventure.commands;
+package com.onarandombox.MultiverseAdventure.commands;
 
 import java.util.List;
 
-import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.command.CommandSender;
+
+import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 import com.pneumaticraft.commandhandler.Command;
 
 /**

@@ -1,10 +1,10 @@
-package me.main__.MultiverseAdventure.listeners;
+package com.onarandombox.MultiverseAdventure.listeners;
 
-import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.event.CustomEventListener;
 import org.bukkit.event.Event;
 
+import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 import com.onarandombox.MultiverseCore.event.MVConfigReloadEvent;
 import com.onarandombox.MultiverseCore.event.MVVersionRequestEvent;
 

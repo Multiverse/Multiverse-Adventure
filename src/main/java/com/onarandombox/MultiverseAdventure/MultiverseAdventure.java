@@ -1,4 +1,4 @@
-package me.main__.MultiverseAdventure;
+package com.onarandombox.MultiverseAdventure;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,13 +8,6 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import me.main__.MultiverseAdventure.commands.*;
-import me.main__.MultiverseAdventure.listeners.MVAConfigReloadListener;
-import me.main__.MultiverseAdventure.listeners.MVAPlayerListener;
-import me.main__.MultiverseAdventure.listeners.MVAPluginListener;
-import me.main__.MultiverseAdventure.listeners.MVAResetListener;
-import me.main__.MultiverseAdventure.listeners.MVAWorldListener;
-import me.main__.MultiverseAdventure.util.FileUtils;
 
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -25,6 +18,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import com.onarandombox.MultiverseAdventure.commands.*;
+import com.onarandombox.MultiverseAdventure.listeners.MVAConfigReloadListener;
+import com.onarandombox.MultiverseAdventure.listeners.MVAPlayerListener;
+import com.onarandombox.MultiverseAdventure.listeners.MVAPluginListener;
+import com.onarandombox.MultiverseAdventure.listeners.MVAResetListener;
+import com.onarandombox.MultiverseAdventure.listeners.MVAWorldListener;
+import com.onarandombox.MultiverseAdventure.util.FileUtils;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVPlugin;
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;

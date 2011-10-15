@@ -1,5 +1,5 @@
 name: Multiverse-Adventure
-main: me.main__.MultiverseAdventure.MultiverseAdventure
+main: com.onarandombox.MultiverseAdventure.MultiverseAdventure
 author: main()
 version: 1.0
 depend: ['Multiverse-Core']

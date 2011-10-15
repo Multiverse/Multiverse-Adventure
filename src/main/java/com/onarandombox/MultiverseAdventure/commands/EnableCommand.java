@@ -1,13 +1,14 @@
-package me.main__.MultiverseAdventure.commands;
+package com.onarandombox.MultiverseAdventure.commands;
 
 import java.util.List;
 
-import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
+
+import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 
 public class EnableCommand extends BaseCommand {
 	

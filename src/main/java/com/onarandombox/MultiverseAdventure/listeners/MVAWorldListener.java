@@ -1,13 +1,14 @@
-package me.main__.MultiverseAdventure.listeners;
+package com.onarandombox.MultiverseAdventure.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.event.world.WorldListener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+
+import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 
 public class MVAWorldListener extends WorldListener {
 	private static final List<String> passes = new ArrayList<String>();

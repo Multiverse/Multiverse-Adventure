@@ -1,4 +1,4 @@
-package me.main__.MultiverseAdventure.event;
+package com.onarandombox.MultiverseAdventure.event;
 
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

@@ -1,4 +1,4 @@
-package me.main__.MultiverseAdventure;
+package com.onarandombox.MultiverseAdventure;
 
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -6,11 +6,11 @@ import java.util.logging.Level;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import me.main__.MultiverseAdventure.event.MVAWResetEvent;
-import me.main__.MultiverseAdventure.event.MVAWResetFinishedEvent;
-import me.main__.MultiverseAdventure.listeners.MVAWorldListener;
-import me.main__.MultiverseAdventure.util.FileUtils;
 
+import com.onarandombox.MultiverseAdventure.event.MVAWResetEvent;
+import com.onarandombox.MultiverseAdventure.event.MVAWResetFinishedEvent;
+import com.onarandombox.MultiverseAdventure.listeners.MVAWorldListener;
+import com.onarandombox.MultiverseAdventure.util.FileUtils;
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 
 /**

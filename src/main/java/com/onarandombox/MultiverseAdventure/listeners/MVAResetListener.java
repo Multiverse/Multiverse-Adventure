@@ -1,14 +1,15 @@
-package me.main__.MultiverseAdventure.listeners;
+package com.onarandombox.MultiverseAdventure.listeners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import me.main__.MultiverseAdventure.MultiverseAdventure;
-import me.main__.MultiverseAdventure.event.MVAWResetFinishedEvent;
 
 import org.bukkit.event.CustomEventListener;
 import org.bukkit.event.Event;
+
+import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
+import com.onarandombox.MultiverseAdventure.event.MVAWResetFinishedEvent;
 
 public class MVAResetListener extends CustomEventListener {
 	private static final HashMap<String, List<Runnable>> resetFinishedTasks = new HashMap<String, List<Runnable>>();

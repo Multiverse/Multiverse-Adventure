@@ -1,4 +1,4 @@
-package me.main__.MultiverseAdventure.util;
+package com.onarandombox.MultiverseAdventure.util;
 
 import java.io.File;
 import java.io.FileInputStream;

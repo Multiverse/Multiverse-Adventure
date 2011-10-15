@@ -1,4 +1,4 @@
-package me.main__.MultiverseAdventure;
+package com.onarandombox.MultiverseAdventure;
 
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;

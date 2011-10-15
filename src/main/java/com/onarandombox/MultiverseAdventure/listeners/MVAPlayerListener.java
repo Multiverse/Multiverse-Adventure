@@ -1,13 +1,14 @@
-package me.main__.MultiverseAdventure.listeners;
+package com.onarandombox.MultiverseAdventure.listeners;
 
-import me.main__.MultiverseAdventure.MVAdventureWorldInfo;
-import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import com.onarandombox.MultiverseAdventure.MVAdventureWorldInfo;
+import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 
 public class MVAPlayerListener extends PlayerListener {
 	@Override

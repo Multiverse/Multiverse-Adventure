@@ -1,13 +1,13 @@
-package me.main__.MultiverseAdventure.listeners;
+package com.onarandombox.MultiverseAdventure.listeners;
 
 import java.util.logging.Level;
 
-import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 
+import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 
 public class MVAPluginListener extends ServerListener {
