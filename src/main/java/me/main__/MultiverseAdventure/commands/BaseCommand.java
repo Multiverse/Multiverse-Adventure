@@ -1,8 +1,8 @@
-package me.main__.MultiverseAdventureWorlds.commands;
+package me.main__.MultiverseAdventure.commands;
 
 import java.util.List;
 
-import me.main__.MultiverseAdventureWorlds.MultiverseAdventureWorlds;
+import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.command.CommandSender;
 import com.pneumaticraft.commandhandler.Command;
@@ -13,9 +13,9 @@ import com.pneumaticraft.commandhandler.Command;
  *
  */
 public abstract class BaseCommand extends Command {
-	protected MultiverseAdventureWorlds plugin;
+	protected MultiverseAdventure plugin;
 	
-	public BaseCommand(MultiverseAdventureWorlds plugin) {
+	public BaseCommand(MultiverseAdventure plugin) {
 		super(plugin);
 		this.plugin = plugin;
 	}

@@ -1,8 +1,8 @@
-package me.main__.MultiverseAdventureWorlds.commands;
+package me.main__.MultiverseAdventure.commands;
 
 import java.util.List;
 
-import me.main__.MultiverseAdventureWorlds.MultiverseAdventureWorlds;
+import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,14 +11,14 @@ import org.bukkit.permissions.PermissionDefault;
 
 public class EnableCommand extends BaseCommand {
 	
-	public EnableCommand(MultiverseAdventureWorlds plugin) {
+	public EnableCommand(MultiverseAdventure plugin) {
         super(plugin);
-        this.setName("Enable AdventureWorlds");
-        this.setCommandUsage("/mvaw enable " + ChatColor.GREEN + "[WORLD]");
+        this.setName("Enable Adventure");
+        this.setCommandUsage("/mva enable " + ChatColor.GREEN + "[WORLD]");
         this.setArgRange(0, 1);
-        this.addKey("mvaw enable");
-        this.addKey("mvawenable");
-        this.setPermission("multiverse.adventure.enable", "Converts a world into an AdventureWorld.", PermissionDefault.OP);
+        this.addKey("mva enable");
+        this.addKey("mvaenable");
+        this.setPermission("multiverse.adventure.enable", "Converts a world into an adventure world.", PermissionDefault.OP);
     }
 
 	@Override
@@ -38,7 +38,7 @@ public class EnableCommand extends BaseCommand {
 		}
 		
 		//checks
-		if (plugin.getMVAWInfo(world) != null) {
+		if (plugin.getMVAInfo(world) != null) {
 			sender.sendMessage("This world is already an AdventureWorld!");
 			return;
 		}

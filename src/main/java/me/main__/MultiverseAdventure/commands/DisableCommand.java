@@ -1,8 +1,8 @@
-package me.main__.MultiverseAdventureWorlds.commands;
+package me.main__.MultiverseAdventure.commands;
 
 import java.util.List;
 
-import me.main__.MultiverseAdventureWorlds.MultiverseAdventureWorlds;
+import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,14 +11,14 @@ import org.bukkit.permissions.PermissionDefault;
 
 public class DisableCommand extends BaseCommand {
 	
-	public DisableCommand(MultiverseAdventureWorlds plugin) {
+	public DisableCommand(MultiverseAdventure plugin) {
         super(plugin);
-        this.setName("Disable AdventureWorlds");
-        this.setCommandUsage("/mvaw disable " + ChatColor.GREEN + "[WORLD]");
+        this.setName("Disable Adventure");
+        this.setCommandUsage("/mva disable " + ChatColor.GREEN + "[WORLD]");
         this.setArgRange(0, 1);
-        this.addKey("mvaw disable");
-        this.addKey("mvawdisable");
-        this.setPermission("multiverse.adventure.disable", "Converts an AdventureWorld back into a normal world.", PermissionDefault.OP);
+        this.addKey("mva disable");
+        this.addKey("mvadisable");
+        this.setPermission("multiverse.adventure.disable", "Converts an adventure world back into a normal world.", PermissionDefault.OP);
     }
 
 	@Override
@@ -43,7 +43,7 @@ public class DisableCommand extends BaseCommand {
 			return;
 		}
 		
-		if (plugin.getMVAWInfo(world) == null) {
+		if (plugin.getMVAInfo(world) == null) {
 			sender.sendMessage("This world is no AdventureWorld!");
 			return;
 		}

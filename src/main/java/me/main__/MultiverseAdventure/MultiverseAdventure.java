@@ -1,4 +1,4 @@
-package me.main__.MultiverseAdventureWorlds;
+package me.main__.MultiverseAdventure;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import me.main__.MultiverseAdventureWorlds.commands.*;
-import me.main__.MultiverseAdventureWorlds.listeners.MVAWConfigReloadListener;
-import me.main__.MultiverseAdventureWorlds.listeners.MVAWPlayerListener;
-import me.main__.MultiverseAdventureWorlds.listeners.MVAWPluginListener;
-import me.main__.MultiverseAdventureWorlds.listeners.MVAWResetListener;
-import me.main__.MultiverseAdventureWorlds.listeners.MVAWWorldListener;
-import me.main__.MultiverseAdventureWorlds.util.FileUtils;
+import me.main__.MultiverseAdventure.commands.*;
+import me.main__.MultiverseAdventure.listeners.MVAConfigReloadListener;
+import me.main__.MultiverseAdventure.listeners.MVAPlayerListener;
+import me.main__.MultiverseAdventure.listeners.MVAPluginListener;
+import me.main__.MultiverseAdventure.listeners.MVAResetListener;
+import me.main__.MultiverseAdventure.listeners.MVAWorldListener;
+import me.main__.MultiverseAdventure.util.FileUtils;
 
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -32,11 +32,11 @@ import com.onarandombox.MultiverseCore.commands.HelpCommand;
 import com.onarandombox.MultiverseCore.utils.DebugLog;
 import com.pneumaticraft.commandhandler.CommandHandler;
 
-public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
-	private static MultiverseAdventureWorlds instance;
+public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
+	private static MultiverseAdventure instance;
 
 	private static final Logger log = Logger.getLogger("Minecraft");
-    private static final String logPrefix = "[Multiverse-AdventureWorlds] ";
+    private static final String logPrefix = "[Multiverse-Adventure] ";
     protected static DebugLog debugLog;
     private MultiverseCore core;
 
@@ -44,7 +44,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
     
     private HashMap<String, MVAdventureWorldInfo> adventureWorlds;
 
-    private Configuration MVAWConfig;
+    private Configuration MVAConfig;
     private final static int requiresProtocol = 5;
 
     public void onLoad() {
@@ -86,7 +86,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
         }
         if (this.core.getProtocolVersion() < requiresProtocol) {
             log.severe(logPrefix + "Your Multiverse-Core is OUT OF DATE");
-            log.severe(logPrefix + "This version of AdventureWorlds requires Protocol Level: " + requiresProtocol);
+            log.severe(logPrefix + "This version of Multiverse-Adventure requires Protocol Level: " + requiresProtocol);
             log.severe(logPrefix + "Your of Core Protocol Level is: " + this.core.getProtocolVersion());
             log.severe(logPrefix + "Grab an updated copy at: ");
             log.severe(logPrefix + "http://bukkit.onarandombox.com/?dir=multiverse-core");
@@ -107,7 +107,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        debugLog = new DebugLog("Multiverse-AdventureWorlds", getDataFolder() + File.separator + "debug.log");
+        debugLog = new DebugLog("Multiverse-Adventure", getDataFolder() + File.separator + "debug.log");
         this.core.incrementPluginCount();
 
         // Register our commands
@@ -120,10 +120,10 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	}
 	
 	private void registerEvents() {
-		MVAWPluginListener pluginListener = new MVAWPluginListener();
-        MVAWPlayerListener playerListener = new MVAWPlayerListener();
-        MVAWConfigReloadListener customListener = new MVAWConfigReloadListener();
-        MVAWWorldListener worldListener = new MVAWWorldListener();
+		MVAPluginListener pluginListener = new MVAPluginListener();
+        MVAPlayerListener playerListener = new MVAPlayerListener();
+        MVAConfigReloadListener customListener = new MVAConfigReloadListener();
+        MVAWorldListener worldListener = new MVAWorldListener();
 
         // Register our listeners with the Bukkit Server
         this.getServer().getPluginManager().registerEvent(Type.PLUGIN_ENABLE, pluginListener, Priority.Normal, this);
@@ -142,12 +142,12 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 
 	private void loadConfig() {
 		//new MVPDefaultConfiguration(getDataFolder(), "config.yml", this.migrator);
-        this.MVAWConfig = this.getConfiguration();
+        this.MVAConfig = this.getConfiguration();
         loadWorlds();
 	}
 	
 	/**
-	 * Iterates through all loaded MVWorlds and enables AdventureWorlds
+	 * Iterates through all loaded MVWorlds and enables Adventure
 	 */
 	public void loadWorlds() {
 		for (MultiverseWorld world : this.getCore().getMVWorldManager().getMVWorlds()) {
@@ -166,7 +166,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	}
 	
 	/**
-	 * Tries to enable an AdventureWorld that's already known to Multiverse-AdventureWorlds.
+	 * Tries to enable an AdventureWorld that's already known to Multiverse-Adventure.
 	 * @param name
 	 * The name of that world.
 	 * @return
@@ -177,7 +177,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	}
 	
 	/**
-	 * Tries to enable an AdventureWorld that's already known to Multiverse-AdventureWorlds.
+	 * Tries to enable an AdventureWorld that's already known to Multiverse-Adventure.
 	 * @param name
 	 * The name of that world.
 	 * @param noreset
@@ -187,9 +187,9 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	 */
 	public boolean tryEnableWorld(String name, boolean noreset) {
 		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAWConfig.getKeys("adventureworlds") != null) && this.MVAWConfig.getKeys("adventureworlds").contains(name)) {
-			ConfigurationNode node = this.MVAWConfig.getNode("adventureworlds." + name);
-			boolean enabled = this.MVAWConfig.getBoolean("adventureworlds." + name + ".enabled", true);
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAConfig.getKeys("adventure") != null) && this.MVAConfig.getKeys("adventure").contains(name)) {
+			ConfigurationNode node = this.MVAConfig.getNode("adventure." + name);
+			boolean enabled = this.MVAConfig.getBoolean("adventure." + name + ".enabled", true);
 			if (enabled) {
 				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, this, node);
 				if (!noreset)
@@ -217,7 +217,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	}
 	
 	/**
-	 * Converts a normal world into an AdventureWorld
+	 * Converts a normal world into an adventure world
 	 * @param name
 	 * The name of the world
 	 * @return
@@ -225,11 +225,11 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	 */
 	public boolean createWorld(String name) {
 		//first write it to the config, then load
-		this.MVAWConfig.setProperty("adventureworlds." + name + ".enabled", true);
+		this.MVAConfig.setProperty("adventure." + name + ".enabled", true);
 		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAWConfig.getKeys("adventureworlds") != null) && this.MVAWConfig.getKeys("adventureworlds").contains(name)) {
-			ConfigurationNode node = this.MVAWConfig.getNode("adventureworlds." + name);
-			boolean enabled = this.MVAWConfig.getBoolean("adventureworlds." + name + ".enabled", true);
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAConfig.getKeys("adventure") != null) && this.MVAConfig.getKeys("adventure").contains(name)) {
+			ConfigurationNode node = this.MVAConfig.getNode("adventure." + name);
+			boolean enabled = this.MVAConfig.getBoolean("adventure." + name + ".enabled", true);
 			if (enabled) {
 				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, this, node);
 				mvawi.scheduleWriteTemplate();
@@ -241,7 +241,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	}
 	
 	/**
-	 * Converts a normal world into an AdventureWorld and sends notifications to a CommandSender
+	 * Converts a normal world into an adventure world and sends notifications to a CommandSender
 	 * @param name
 	 * The name of the world
 	 * @param sender
@@ -250,11 +250,11 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	public void createWorldWithNotifications(String name, CommandSender sender) {
 		sender.sendMessage("Converting world '" + name + "' into an AdventureWorld...");
 		//first write it to the config, then load
-		this.MVAWConfig.setProperty("adventureworlds." + name + ".enabled", true);
+		this.MVAConfig.setProperty("adventure." + name + ".enabled", true);
 		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAWConfig.getKeys("adventureworlds") != null) && this.MVAWConfig.getKeys("adventureworlds").contains(name)) {
-			ConfigurationNode node = this.MVAWConfig.getNode("adventureworlds." + name);
-			boolean enabled = this.MVAWConfig.getBoolean("adventureworlds." + name + ".enabled", true);
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAConfig.getKeys("adventure") != null) && this.MVAConfig.getKeys("adventure").contains(name)) {
+			ConfigurationNode node = this.MVAConfig.getNode("adventure." + name);
+			boolean enabled = this.MVAConfig.getBoolean("adventure." + name + ".enabled", true);
 			if (enabled) {
 				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, this, node);
 				mvawi.scheduleWriteTemplate();
@@ -265,7 +265,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	}
 	
 	/**
-	 * Converts an AdventureWorld back into a normal world.
+	 * Converts an adventure world back into a normal world.
 	 * @param name
 	 * The name of the world.
 	 */
@@ -274,7 +274,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	}
 	
 	/**
-	 * Converts an AdventureWorld back into a normal world and sends notifications to a CommandSender.
+	 * Converts an adventure world back into a normal world and sends notifications to a CommandSender.
 	 * @param name
 	 * The name of the world.
 	 * @param sender
@@ -282,23 +282,23 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	 */
 	public void deleteWorld(final String name, final CommandSender sender) {
 		final String template;
-		if (this.getMVAWInfo(name) == null) {
+		if (this.getMVAInfo(name) == null) {
 			//idiots.
 			return;
 		}
 		else {
-			template = this.getMVAWInfo(name).getTemplate();
+			template = this.getMVAInfo(name).getTemplate();
 		}
 		
 		//reset, unload, modify the config and then load
 		this.getCore().getMVWorldManager().removePlayersFromWorld(name); // coming soon
-		this.getMVAWInfo(name).resetNow();
+		this.getMVAInfo(name).resetNow();
 
 		//Now use our task-system to do the rest when the reset is finished.
-		MVAWResetListener.addTask(name, new Runnable() {
+		MVAResetListener.addTask(name, new Runnable() {
 			public void run() {
 				getCore().getMVWorldManager().unloadWorld(name);
-				MVAWConfig.removeProperty("adventureworlds." + name);
+				MVAConfig.removeProperty("adventure." + name);
 				File serverFolder = new File(getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
 				File templateFile = new File(serverFolder, template);
 				FileUtils.deleteFolder(templateFile);
@@ -330,11 +330,11 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	 * True if success, false if failed.
 	 */
 	public boolean flushWorld(String name, CommandSender sender) {
-		if (this.getMVAWInfo(name) == null) {
+		if (this.getMVAInfo(name) == null) {
 			//idiots.
 			return false;
 		}
-		else return this.getMVAWInfo(name).scheduleWriteTemplate(sender);
+		else return this.getMVAInfo(name).scheduleWriteTemplate(sender);
 	}
 	
 	private void createDefaultPerms() {
@@ -408,7 +408,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 
 	@Override
 	public String dumpVersionInfo(String buffer) {
-		buffer += logAndAddToPasteBinBuffer("Multiverse-AdventureWorlds Version: " + this.getDescription().getVersion());
+		buffer += logAndAddToPasteBinBuffer("Multiverse-Adventure Version: " + this.getDescription().getVersion());
         buffer += logAndAddToPasteBinBuffer("Bukkit Version: " + this.getServer().getVersion());
         //buffer += logAndAddToPasteBinBuffer("Loaded Portals: " + this.getPortalManager().getAllPortals().size());
         //buffer += logAndAddToPasteBinBuffer("Dumping Portal Values: (version " + this.getPortalsConfig().getString("version", "NOT SET") + ")");
@@ -422,7 +422,7 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 
     private String logAndAddToPasteBinBuffer(String string) {
         this.log(Level.INFO, string);
-        return "[Multiverse-AdventureWorlds] " + string + "\n";
+        return "[Multiverse-Adventure] " + string + "\n";
     }
 
 	@Override
@@ -452,15 +452,15 @@ public class MultiverseAdventureWorlds extends JavaPlugin implements MVPlugin {
 	 * @return
 	 * The MVAdventureWorldInfo-Object
 	 */
-	public MVAdventureWorldInfo getMVAWInfo(String name) {
+	public MVAdventureWorldInfo getMVAInfo(String name) {
 		return this.adventureWorlds.get(name);
 	}
 	
-	public static MultiverseAdventureWorlds getInstance() {
+	public static MultiverseAdventure getInstance() {
 		return instance;
 	}
 
 	public void saveConfig() {
-        this.MVAWConfig.save();
+        this.MVAConfig.save();
 	}
 }

@@ -1,8 +1,8 @@
-package me.main__.MultiverseAdventureWorlds.commands;
+package me.main__.MultiverseAdventure.commands;
 
 import java.util.List;
 
-import me.main__.MultiverseAdventureWorlds.MultiverseAdventureWorlds;
+import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,7 +11,7 @@ import org.bukkit.permissions.PermissionDefault;
 
 public class FlushCommand extends BaseCommand {
 	
-	public FlushCommand(MultiverseAdventureWorlds plugin) {
+	public FlushCommand(MultiverseAdventure plugin) {
         super(plugin);
         this.setName("Write your changes to the template");
         this.setCommandUsage("/mvaw write " + ChatColor.GREEN + "[WORLD]");
@@ -49,7 +49,7 @@ public class FlushCommand extends BaseCommand {
 			return;
 		}
 		
-		if (plugin.getMVAWInfo(world) == null) {
+		if (plugin.getMVAInfo(world) == null) {
 			sender.sendMessage("This world is no AdventureWorld!");
 			return;
 		}

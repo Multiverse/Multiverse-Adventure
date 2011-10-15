@@ -1,7 +1,7 @@
-package me.main__.MultiverseAdventureWorlds.listeners;
+package me.main__.MultiverseAdventure.listeners;
 
-import me.main__.MultiverseAdventureWorlds.MVAdventureWorldInfo;
-import me.main__.MultiverseAdventureWorlds.MultiverseAdventureWorlds;
+import me.main__.MultiverseAdventure.MVAdventureWorldInfo;
+import me.main__.MultiverseAdventure.MultiverseAdventure;
 
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class MVAWPlayerListener extends PlayerListener {
+public class MVAPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         preHandle(event.getFrom().getName(), event.getPlayer().getWorld().getName());
@@ -35,10 +35,10 @@ public class MVAWPlayerListener extends PlayerListener {
 		MVAdventureWorldInfo toWorld = null;
 		
 		if (fromWorldName != null)
-			fromWorld = MultiverseAdventureWorlds.getInstance().getMVAWInfo(fromWorldName);
+			fromWorld = MultiverseAdventure.getInstance().getMVAInfo(fromWorldName);
 		
 		if (toWorldName != null)
-			toWorld = MultiverseAdventureWorlds.getInstance().getMVAWInfo(toWorldName);
+			toWorld = MultiverseAdventure.getInstance().getMVAInfo(toWorldName);
 		
 		handle(fromWorld, toWorld);
 	}

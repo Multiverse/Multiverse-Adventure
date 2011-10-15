@@ -1,4 +1,4 @@
-package me.main__.MultiverseAdventureWorlds.util;
+package me.main__.MultiverseAdventure.util;
 
 import java.io.File;
 import java.io.FileInputStream;

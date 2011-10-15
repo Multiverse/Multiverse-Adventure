@@ -1,4 +1,4 @@
-package me.main__.MultiverseAdventureWorlds;
+package me.main__.MultiverseAdventure;
 
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -7,10 +7,11 @@ import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.config.ConfigurationNode;
 
-import me.main__.MultiverseAdventureWorlds.event.MVAWResetEvent;
-import me.main__.MultiverseAdventureWorlds.event.MVAWResetFinishedEvent;
-import me.main__.MultiverseAdventureWorlds.listeners.MVAWWorldListener;
-import me.main__.MultiverseAdventureWorlds.util.FileUtils;
+import me.main__.MultiverseAdventure.event.MVAWResetEvent;
+import me.main__.MultiverseAdventure.event.MVAWResetFinishedEvent;
+import me.main__.MultiverseAdventure.listeners.MVAWorldListener;
+import me.main__.MultiverseAdventure.util.FileUtils;
+
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 
 /**
@@ -23,7 +24,7 @@ public final class MVAdventureWorldInfo {
 	 */
 	private boolean active;
 	private final MultiverseWorld world;
-	private final MultiverseAdventureWorlds plugin;
+	private final MultiverseAdventure plugin;
 	
 	/**
 	 * The name of the template-folder for this AdventureWorld
@@ -35,7 +36,7 @@ public final class MVAdventureWorldInfo {
 	private int resetTaskId;
 	private int activationTaskId;
 	
-	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventureWorlds plugin, String template, int activationdelay, int resetdelay) {
+	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventure plugin, String template, int activationdelay, int resetdelay) {
 		this.world = world;
 		this.plugin = plugin;
 		active = false;
@@ -48,7 +49,7 @@ public final class MVAdventureWorldInfo {
 		activationTaskId = -1;
 	}
 	
-	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventureWorlds plugin, ConfigurationNode config) {
+	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventure plugin, ConfigurationNode config) {
 		this.world = world;
 		this.plugin = plugin;
 		active = false;
@@ -56,7 +57,7 @@ public final class MVAdventureWorldInfo {
 		this.setTemplate(config.getString("template", "NAME.template")); // "NAME" will be replaced with the world's name
 		this.setActivationDelay(config.getInt("activationdelay", 10));
 		this.setResetDelay(config.getInt("resetdelay", 10));
-        MultiverseAdventureWorlds.getInstance().saveConfig();
+        MultiverseAdventure.getInstance().saveConfig();
 		
 		resetTaskId = -1;
 		activationTaskId = -1;
@@ -289,7 +290,7 @@ public final class MVAdventureWorldInfo {
 		@Override
 		public void run() {
 			// 4. Load the world
-			MVAWWorldListener.addPass(name);
+			MVAWorldListener.addPass(name);
 			plugin.getCore().getMVWorldManager().loadWorld(name);
 						
 			plugin.log(Level.INFO, "Reset of world '" + name + "' finished.");
