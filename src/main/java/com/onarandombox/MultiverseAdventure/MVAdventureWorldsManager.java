@@ -7,6 +7,8 @@ import java.util.concurrent.Callable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
 import com.onarandombox.MultiverseAdventure.api.AdventureWorldsManager;
 import com.onarandombox.MultiverseAdventure.listeners.MVAResetListener;
 import com.onarandombox.MultiverseAdventure.util.FileUtils;
@@ -16,14 +18,14 @@ import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 /**
  * @author main()
  */
-public class SimpleAdventureWorldsManager implements AdventureWorldsManager {
-    private final HashMap<String, MVAdventureWorldInfo> adventureWorlds;
+public class MVAdventureWorldsManager implements AdventureWorldsManager {
+    private final HashMap<String, MVAdventureWorld> adventureWorlds;
     private final MultiverseAdventure plugin;
     private final MultiverseCore core;
     private final FileConfiguration config;
     
-	public SimpleAdventureWorldsManager(MultiverseAdventure plugin, MultiverseCore core, FileConfiguration config) {
-    	this.adventureWorlds = new HashMap<String, MVAdventureWorldInfo>();
+	public MVAdventureWorldsManager(MultiverseAdventure plugin, MultiverseCore core, FileConfiguration config) {
+    	this.adventureWorlds = new HashMap<String, MVAdventureWorld>();
     	this.plugin = plugin;
     	this.core = core;
     	this.config = config;
@@ -37,7 +39,7 @@ public class SimpleAdventureWorldsManager implements AdventureWorldsManager {
 	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#getMVAWInfo(java.lang.String)
 	 */
 	@Override
-	public MVAdventureWorldInfo getMVAInfo(String name) {
+	public AdventureWorld getMVAInfo(String name) {
 		return this.adventureWorlds.get(name);
 	}
 	
@@ -56,7 +58,7 @@ public class SimpleAdventureWorldsManager implements AdventureWorldsManager {
 	 */
 	@Override
 	public void unloadWorlds() {
-		for (MVAdventureWorldInfo world : this.adventureWorlds.values()) {
+		for (AdventureWorld world : this.adventureWorlds.values()) {
 			disableWorld(world.getName());
 		}
 		this.adventureWorlds.clear(); //safety
@@ -80,7 +82,7 @@ public class SimpleAdventureWorldsManager implements AdventureWorldsManager {
 			ConfigurationSection node = this.config.getConfigurationSection("adventureworlds." + name);
 			boolean enabled = this.config.getBoolean("adventureworlds." + name + ".enabled", true);
 			if (enabled) {
-				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, plugin, node);
+				MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
 				if (!noreset)
 					mvawi.resetNow();
 				this.adventureWorlds.put(name, mvawi);
@@ -114,7 +116,7 @@ public class SimpleAdventureWorldsManager implements AdventureWorldsManager {
 			ConfigurationSection node = this.config.getConfigurationSection("adventureworlds." + name);
 			boolean enabled = this.config.getBoolean("adventureworlds." + name + ".enabled", true);
 			if (enabled) {
-				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, plugin, node);
+				MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
 				mvawi.scheduleWriteTemplate();
 				this.adventureWorlds.put(name, mvawi);
 				return true;
@@ -136,7 +138,7 @@ public class SimpleAdventureWorldsManager implements AdventureWorldsManager {
 			ConfigurationSection node = this.config.getConfigurationSection("adventureworlds." + name);
 			boolean enabled = this.config.getBoolean("adventureworlds." + name + ".enabled", true);
 			if (enabled) {
-				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, plugin, node);
+				MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
 				mvawi.scheduleWriteTemplate();
 				this.adventureWorlds.put(name, mvawi);
 				return;

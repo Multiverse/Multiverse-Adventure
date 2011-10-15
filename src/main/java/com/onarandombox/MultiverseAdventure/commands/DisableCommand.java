@@ -44,13 +44,13 @@ public class DisableCommand extends BaseCommand {
 			return;
 		}
 		
-		if (plugin.getMVAInfo(world) == null) {
+		if (plugin.getAdventureWorldsManager().getMVAInfo(world) == null) {
 			sender.sendMessage("This world is no AdventureWorld!");
 			return;
 		}
 		
 		
-		plugin.deleteWorld(world, sender);
+		plugin.getAdventureWorldsManager().deleteWorld(world, sender);
 	}
 
 }

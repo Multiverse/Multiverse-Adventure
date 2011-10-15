@@ -7,8 +7,8 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.onarandombox.MultiverseAdventure.MVAdventureWorldInfo;
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
+import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
 
 public class MVAPlayerListener extends PlayerListener {
 	@Override
@@ -32,19 +32,19 @@ public class MVAPlayerListener extends PlayerListener {
 	}
 	
 	private void preHandle(String fromWorldName, String toWorldName) {
-		MVAdventureWorldInfo fromWorld = null;
-		MVAdventureWorldInfo toWorld = null;
+		AdventureWorld fromWorld = null;
+		AdventureWorld toWorld = null;
 		
 		if (fromWorldName != null)
-			fromWorld = MultiverseAdventure.getInstance().getMVAInfo(fromWorldName);
+			fromWorld = MultiverseAdventure.getInstance().getAdventureWorldsManager().getMVAInfo(fromWorldName);
 		
 		if (toWorldName != null)
-			toWorld = MultiverseAdventure.getInstance().getMVAInfo(toWorldName);
+			toWorld = MultiverseAdventure.getInstance().getAdventureWorldsManager().getMVAInfo(toWorldName);
 		
 		handle(fromWorld, toWorld);
 	}
 	
-	private void handle(MVAdventureWorldInfo fromWorld, MVAdventureWorldInfo toWorld) {
+	private void handle(AdventureWorld fromWorld, AdventureWorld toWorld) {
 		if (fromWorld != null) {
     		//somebody has left an adventure world ==> check if there's anybody left
     		if (fromWorld.getMVWorld().getCBWorld().getPlayers().isEmpty()) {

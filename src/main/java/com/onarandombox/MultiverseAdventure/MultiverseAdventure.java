@@ -14,6 +14,8 @@ import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
 import com.onarandombox.MultiverseAdventure.api.AdventureWorldsManager;
 import com.onarandombox.MultiverseAdventure.commands.*;
 import com.onarandombox.MultiverseAdventure.listeners.*;
@@ -33,7 +35,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
     private CommandHandler commandHandler;
     
-    //private HashMap<String, MVAdventureWorldInfo> adventureWorlds;
+    //private HashMap<String, MVAdventureWorld> adventureWorlds;
     private AdventureWorldsManager manager;
 
     private FileConfiguration MVAWConfig;
@@ -86,8 +88,8 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
             return;
         }
         
-        //this.adventureWorlds = new HashMap<String, MVAdventureWorldInfo>();
-        manager = new SimpleAdventureWorldsManager(this, core, MVAWConfig);
+        //this.adventureWorlds = new HashMap<String, MVAdventureWorld>();
+        manager = new MVAdventureWorldsManager(this, core, MVAWConfig);
 
         this.loadConfig();
 
@@ -269,7 +271,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 	 * @deprecated Use the AdventureWorldsManager instead
 	 */
 	@Deprecated
-	public MVAdventureWorldInfo getMVAInfo(String fromWorldName) {
+	public AdventureWorld getMVAInfo(String fromWorldName) {
 		return this.getAdventureWorldsManager().getMVAInfo(fromWorldName);
 	}
 

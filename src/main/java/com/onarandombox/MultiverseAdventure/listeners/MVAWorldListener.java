@@ -17,24 +17,20 @@ public class MVAWorldListener extends WorldListener {
 	public void onWorldLoad(WorldLoadEvent event) {
 		final WorldLoadEvent fevent = event;
 		if (!passes.contains(event.getWorld().getName())) {
-			MultiverseAdventure.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(
-							MultiverseAdventure.getInstance(),
+			MultiverseAdventure.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MultiverseAdventure.getInstance(),
 							new Runnable() {
 								@Override
 								public void run() {
-									MultiverseAdventure.getInstance()
-											.tryEnableWorld(fevent.getWorld().getName());
+									MultiverseAdventure.getInstance().getAdventureWorldsManager().tryEnableWorld(fevent.getWorld().getName());
 								}
 							}, 20);
 		}
 		else {
-			MultiverseAdventure.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(
-					MultiverseAdventure.getInstance(),
+			MultiverseAdventure.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MultiverseAdventure.getInstance(),
 					new Runnable() {
 						@Override
 						public void run() {
-							MultiverseAdventure.getInstance()
-									.tryEnableWorld(fevent.getWorld().getName(), true); //Without reset here
+							MultiverseAdventure.getInstance().getAdventureWorldsManager().tryEnableWorld(fevent.getWorld().getName(), true); //Without reset here
 						}
 					}, 20);			
 			passes.remove(event.getWorld().getName());
@@ -43,7 +39,7 @@ public class MVAWorldListener extends WorldListener {
 
 	@Override
 	public void onWorldUnload(WorldUnloadEvent event) {
-		MultiverseAdventure.getInstance().disableWorld(event.getWorld().getName());
+		MultiverseAdventure.getInstance().getAdventureWorldsManager().disableWorld(event.getWorld().getName());
 	}
 	
 	public static void addPass(String worldname) {

@@ -39,7 +39,7 @@ public class EnableCommand extends BaseCommand {
 		}
 		
 		//checks
-		if (plugin.getMVAInfo(world) != null) {
+		if (plugin.getAdventureWorldsManager().getMVAInfo(world) != null) {
 			sender.sendMessage("This world is already an AdventureWorld!");
 			return;
 		}
@@ -50,7 +50,7 @@ public class EnableCommand extends BaseCommand {
 		}
 		
 		
-		plugin.createWorldWithNotifications(world, sender);
+		plugin.getAdventureWorldsManager().createWorldWithNotifications(world, sender);
 	}
 
 }

@@ -6,8 +6,8 @@ import java.util.logging.Level;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.util.config.ConfigurationNode;
 
+import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
 import com.onarandombox.MultiverseAdventure.event.MVAResetEvent;
 import com.onarandombox.MultiverseAdventure.event.MVAResetFinishedEvent;
 import com.onarandombox.MultiverseAdventure.listeners.MVAWorldListener;
@@ -18,7 +18,7 @@ import com.onarandombox.MultiverseCore.api.MultiverseWorld;
  * Provides support for "adventure"-worlds
  * @author main()
  */
-public final class MVAdventureWorldInfo {
+public final class MVAdventureWorld implements AdventureWorld {
 	/**
 	 * Whether this AdventureWorld is "active" (contains players that have changed it)
 	 */
@@ -36,7 +36,7 @@ public final class MVAdventureWorldInfo {
 	private int resetTaskId;
 	private int activationTaskId;
 	
-	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventure plugin, String template, int activationdelay, int resetdelay) {
+	public MVAdventureWorld(MultiverseWorld world, MultiverseAdventure plugin, String template, int activationdelay, int resetdelay) {
 		this.world = world;
 		this.plugin = plugin;
 		active = false;
@@ -49,7 +49,7 @@ public final class MVAdventureWorldInfo {
 		activationTaskId = -1;
 	}
 	
-	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventure plugin, ConfigurationSection node) {
+	public MVAdventureWorld(MultiverseWorld world, MultiverseAdventure plugin, ConfigurationSection node) {
 		this.world = world;
 		this.plugin = plugin;
 		active = false;
@@ -63,18 +63,30 @@ public final class MVAdventureWorldInfo {
 		activationTaskId = -1;
 	}
 	
-	public void saveTo(ConfigurationNode config) {
-		config.setProperty("enabled", true);
-		config.setProperty("template", this.template);
-		config.setProperty("activationdelay", activationdelay);
-		config.setProperty("resetdelay", resetdelay);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void saveTo(ConfigurationSection config) {
+		config.set("enabled", true);
+		config.set("template", this.template);
+		config.set("activationdelay", activationdelay);
+		config.set("resetdelay", resetdelay);
 		plugin.saveConfig();
 	}
 
- 	public boolean isActive() {
+	/**
+	 * {@inheritDoc}
+	 */
+ 	@Override
+	public boolean isActive() {
 		return active;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean isActivating() {
 		if (isActive())
 			return false;
@@ -83,52 +95,82 @@ public final class MVAdventureWorldInfo {
 	}
 
 	/**
-	 * Sets the activation state DIRECTLY. This is DEPRECATED!
-	 * @param active
-	 * The new activation state.
-	 * @deprecated Use {@link #scheduleActivation()} instead.
+	 * {@inheritDoc}
 	 */
+	@Override
 	@Deprecated
 	public void setActive(boolean active) {
 		this.active = active;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean isResetting() {
 		return plugin.getServer().getScheduler().isQueued(resetTaskId); // || plugin.getServer().getScheduler().isCurrentlyRunning(resetTaskId); We don't need to check this since the ResetPreparer runs in the main thread
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public MultiverseWorld getMVWorld() {
 		return world;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String getTemplate() {
 		return template.replaceAll("NAME", world.getName());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void setTemplate(String template) {
 		this.template = template;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int getActivationDelay() {
 		return activationdelay;
 	}
 
-	public void setActivationDelay(int activationdelay) {
-		this.activationdelay = activationdelay;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setActivationDelay(int activationDelay) {
+		this.activationdelay = activationDelay;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int getResetDelay() {
 		return resetdelay;
 	}
 
-	public void setResetDelay(int resetdelay) {
-		this.resetdelay = resetdelay;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setResetDelay(int resetDelay) {
+		this.resetdelay = resetDelay;
 	}
 
 	/**
-	 * Schedules a reset
-	 * @return If the reset was successfully scheduled
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean scheduleReset() {
 		resetTaskId = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
 				new ResetPreparer(this), getResetDelay() * 20);
@@ -138,15 +180,17 @@ public final class MVAdventureWorldInfo {
 	}
 	
 	/**
-	 * Resets the AdventureWorld immediately, ignoring the resetdelay.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void resetNow() {
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ResetPreparer(this));
 	}
 	
 	/**
-	 * Cancels a scheduled reset
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void cancelReset() {
 		if (isResetting()) {
 			plugin.getServer().getScheduler().cancelTask(resetTaskId);
@@ -154,8 +198,9 @@ public final class MVAdventureWorldInfo {
 	}
 	
 	/**
-	 * Schedules the activation of this AdventureWorld
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void scheduleActivation() {
 		if (getActivationDelay() == 0) {
 			active = true;
@@ -170,8 +215,9 @@ public final class MVAdventureWorldInfo {
 	}
 	
 	/**
-	 * Cancels the activation of this AdventureWorld
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void cancelActivation() {
 		if (isActivating()) {
 			plugin.getServer().getScheduler().cancelTask(activationTaskId);
@@ -179,19 +225,17 @@ public final class MVAdventureWorldInfo {
 	}
 	
 	/**
-	 * This is a convenience method that can be used instead of {@link #getMVWorld()}.getName()
-	 * @return
-	 * The name of the world as a String
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String getName() {
 		return world.getName();
 	}
 	
 	/**
-	 * Writes the current state of the world to the template. Useful for initializing.
-	 * @return
-	 * True if success, false if failed.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean scheduleWriteTemplate() {
 		return scheduleWriteTemplate(new TemplateWriter());
 	}
@@ -213,12 +257,9 @@ public final class MVAdventureWorldInfo {
 	}
 
 	/**
-	 * Writes the current state of the world to the template. Useful for initializing.
-	 * @param onFinish
-	 * A Callable<Void> that's executed after the work is done.
-	 * @return
-	 * True if success, false if failed.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean scheduleWriteTemplate(Callable<Void> onFinish) {
 		return scheduleWriteTemplate(new TemplateWriter(onFinish));
 	}
@@ -232,10 +273,10 @@ public final class MVAdventureWorldInfo {
 	}
 	
 	/**
-	 * Prepares the name for the reset and then schedules the actual reset. (SYNC)
+	 * Prepares the AdventureWorld for the reset and then schedules the actual reset. (SYNC)
 	 */
 	private class ResetPreparer implements Runnable {
-		private MVAdventureWorldInfo world;
+		private AdventureWorld world;
 		
 		@Override
 		public void run() {
@@ -268,7 +309,7 @@ public final class MVAdventureWorldInfo {
 				plugin.log(Level.SEVERE, "Couldn't schedule a ResetWorker!");
 		}
 		
-		public ResetPreparer(MVAdventureWorldInfo world) {
+		public ResetPreparer(AdventureWorld world) {
 			this.world = world;
 		}
 	}

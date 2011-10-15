@@ -2,18 +2,17 @@ package com.onarandombox.MultiverseAdventure.api;
 
 import org.bukkit.command.CommandSender;
 
-import com.onarandombox.MultiverseAdventure.MVAdventureWorldInfo;
 
 public interface AdventureWorldsManager {
 
 	/**
-	 * Gets the MVAdventureWorldInfo-Object of a world.
+	 * Gets the MVAdventureWorld-Object of a world.
 	 * @param name
 	 * The name of the world.
 	 * @return
-	 * The MVAdventureWorldInfo-Object
+	 * The MVAdventureWorld-Object
 	 */
-	public abstract MVAdventureWorldInfo getMVAInfo(String name);
+	public abstract AdventureWorld getMVAInfo(String name);
 
 	/**
 	 * Cycles through all loaded worlds and loads those into MVAW, who are AdventureWorlds.

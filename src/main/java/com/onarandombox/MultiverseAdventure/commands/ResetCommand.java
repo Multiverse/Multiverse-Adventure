@@ -43,7 +43,7 @@ public class ResetCommand extends BaseCommand {
 			return;
 		}
 		
-		if (plugin.getMVAInfo(world) == null) {
+		if (plugin.getAdventureWorldsManager().getMVAInfo(world) == null) {
 			sender.sendMessage("This world is no AdventureWorld!");
 			return;
 		}

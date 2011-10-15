@@ -50,12 +50,12 @@ public class FlushCommand extends BaseCommand {
 			return;
 		}
 		
-		if (plugin.getMVAInfo(world) == null) {
+		if (plugin.getAdventureWorldsManager().getMVAInfo(world) == null) {
 			sender.sendMessage("This world is no AdventureWorld!");
 			return;
 		}
 		
-		plugin.flushWorld(world, sender);
+		plugin.getAdventureWorldsManager().flushWorld(world, sender);
 	}
 
 }
