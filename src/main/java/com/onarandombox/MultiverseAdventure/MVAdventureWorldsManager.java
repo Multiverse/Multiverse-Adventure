@@ -218,4 +218,13 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 				return null;
 			}});
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void saveAllTo(ConfigurationSection config) {
+		for (MVAdventureWorld aw : adventureWorlds.values()) {
+			aw.saveTo(config.getConfigurationSection(aw.getName()));
+		}
+	}
 }

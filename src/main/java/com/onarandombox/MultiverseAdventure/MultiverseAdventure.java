@@ -208,7 +208,8 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
 	@Override
 	public void onDisable() {
-		
+		//save config
+		saveConfig();
 	}
 
 	@Override
@@ -247,7 +248,9 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
 	public void reloadConfigs() {
 		manager.unloadWorlds();
+		this.saveConfig();
 		this.loadConfig();
+		manager.loadWorlds();
 	}
 	
 	public static MultiverseAdventure getInstance() {
@@ -255,6 +258,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 	}
 
 	public void saveConfig() {
+		this.getAdventureWorldsManager().saveAllTo(this.MVAConfig.getConfigurationSection("adventure"));
         try {
 			this.MVAConfig.save(new File(this.getDataFolder(), "config.yml"));
 		} catch (IOException e) {

@@ -1,6 +1,7 @@
 package com.onarandombox.MultiverseAdventure.api;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 
 
 public interface AdventureWorldsManager {
@@ -106,5 +107,10 @@ public interface AdventureWorldsManager {
 	 * True if success, false if failed.
 	 */
 	public abstract boolean flushWorld(String name, CommandSender sender);
+	
+	/**
+	 * Saves all AdventureWorlds to the given ConfigurationSection
+	 */
+	public abstract void saveAllTo(ConfigurationSection config);
 
 }
