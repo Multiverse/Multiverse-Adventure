@@ -14,10 +14,10 @@ public class ResetCommand extends BaseCommand {
 	public ResetCommand(MultiverseAdventure plugin) {
         super(plugin);
         this.setName("Manually trigger a reset of the specified world.");
-        this.setCommandUsage("/mvaw reset " + ChatColor.GREEN + "[WORLD]");
+        this.setCommandUsage("/mva reset " + ChatColor.GREEN + "[WORLD]");
         this.setArgRange(0, 1);
-        this.addKey("mvaw reset");
-        this.addKey("mvawreset");
+        this.addKey("mva reset");
+        this.addKey("mvareset");
         this.setPermission("multiverse.adventure.reset", "Manually trigger a reset of the specified world.", PermissionDefault.OP);
     }
 
@@ -48,7 +48,7 @@ public class ResetCommand extends BaseCommand {
 			return;
 		}
 		
-		
+		// TODO this
 	}
 
 }

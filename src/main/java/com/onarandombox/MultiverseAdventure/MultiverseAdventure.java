@@ -38,7 +38,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     //private HashMap<String, MVAdventureWorld> adventureWorlds;
     private AdventureWorldsManager manager;
 
-    private FileConfiguration MVAWConfig;
+    private FileConfiguration MVAConfig;
     private final static int requiresProtocol = 5;
 
     public void onLoad() {
@@ -88,10 +88,12 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
             return;
         }
         
-        //this.adventureWorlds = new HashMap<String, MVAdventureWorld>();
-        manager = new MVAdventureWorldsManager(this, core, MVAWConfig);
-
         this.loadConfig();
+        
+        //this.adventureWorlds = new HashMap<String, MVAdventureWorld>();
+        manager = new MVAdventureWorldsManager(this, core, MVAConfig);
+
+        manager.loadWorlds();
 
         // Turn on Logging and register ourselves with Core
         log.info(logPrefix + "- Version " + this.getDescription().getVersion() + " Enabled - By " + getAuthors());
@@ -136,9 +138,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 	}
 
 	private void loadConfig() {
-		//new MVPDefaultConfiguration(getDataFolder(), "config.yml", this.migrator);
-        this.MVAWConfig = this.getConfig();
-        manager.loadWorlds();
+        this.MVAConfig = this.getConfig();
 	}
 	
 	private void createDefaultPerms() {
@@ -166,7 +166,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         
         for (com.pneumaticraft.commandhandler.Command c : this.commandHandler.getAllCommands()) {
             if (c instanceof HelpCommand) {
-                c.addKey("mvaw");
+                c.addKey("mva");
             }
         }
 	}
@@ -255,7 +255,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
 	public void saveConfig() {
         try {
-			this.MVAWConfig.save(new File(this.getDataFolder(), "config.yml"));
+			this.MVAConfig.save(new File(this.getDataFolder(), "config.yml"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			this.log(Level.SEVERE, "Couldn't write to config.yml! Disabling...");

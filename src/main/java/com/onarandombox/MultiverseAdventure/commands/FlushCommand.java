@@ -15,16 +15,16 @@ public class FlushCommand extends BaseCommand {
 	public FlushCommand(MultiverseAdventure plugin) {
         super(plugin);
         this.setName("Write your changes to the template");
-        this.setCommandUsage("/mvaw write " + ChatColor.GREEN + "[WORLD]");
+        this.setCommandUsage("/mva write " + ChatColor.GREEN + "[WORLD]");
         this.setArgRange(0, 1);
-        this.addKey("mvaw write");
-        this.addKey("mvawwrite");
-        this.addKey("mvaw write template");
-        this.addKey("mvaw writetemplate");
-        this.addKey("mvawwrite template");
-        this.addKey("mvawwritetemplate");
-        this.addKey("mvaw flush");
-        this.addKey("mvawflush");
+        this.addKey("mva write");
+        this.addKey("mvawrite");
+        this.addKey("mva write template");
+        this.addKey("mva writetemplate");
+        this.addKey("mvawrite template");
+        this.addKey("mvawritetemplate");
+        this.addKey("mva flush");
+        this.addKey("mvaflush");
         this.setPermission("multiverse.adventure.flush", "Writes the the current state of an AdventureWorld to the template.", PermissionDefault.OP);
     }
 

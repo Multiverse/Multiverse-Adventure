@@ -395,6 +395,7 @@ public final class MVAdventureWorld implements AdventureWorld {
 			// 3. Copy
 			FileUtils.copyFolder(worldFile, templateFile);
 			// 4. Load
+			MVAWorldListener.addPass(getName());
 			plugin.getCore().getMVWorldManager().loadWorld(getName());
 			
 			if (onFinish != null) {
@@ -411,9 +412,7 @@ public final class MVAdventureWorld implements AdventureWorld {
 		}
 		
 		/**
-		 * Create a new TemplateWriter that sends a notification to a client after the work is done.
-		 * @param client
-		 * The client
+		 * Create a new TemplateWriter that does something after the work is done.
 		 */
 		public TemplateWriter(Callable<Void> onFinish) {
 			this.onFinish = onFinish;

@@ -4,15 +4,27 @@ author: main()
 version: 1.0
 depend: ['Multiverse-Core']
 commands:
-  mvaw:
+  mva:
     description: Generic Multiverse-Adventure Command
     usage: /<command>
-  mvawenable:
+  mvaenable:
     description: Generic Multiverse-Adventure Command
     usage: /<command>
-  mvawmodify:
+  mvamodify:
     description: Generic Multiverse-Adventure Command
     usage: /<command>
-  mvawdisable:
+  mvadisable:
+    description: Generic Multiverse-Adventure Command
+    usage: /<command>
+  mvawrite:
+    description: Generic Multiverse-Adventure Command
+    usage: /<command>
+  mvaflush:
+    description: Generic Multiverse-Adventure Command
+    usage: /<command>
+  mvawritetemplate:
+    description: Generic Multiverse-Adventure Command
+    usage: /<command>
+  mvareset:
     description: Generic Multiverse-Adventure Command
     usage: /<command>

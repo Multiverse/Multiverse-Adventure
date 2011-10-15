@@ -78,9 +78,9 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 	@Override
 	public boolean tryEnableWorld(String name, boolean noreset) {
 		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.config.contains("adventureworlds." + name)) {
-			ConfigurationSection node = this.config.getConfigurationSection("adventureworlds." + name);
-			boolean enabled = this.config.getBoolean("adventureworlds." + name + ".enabled", true);
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.config.contains("adventure." + name)) {
+			ConfigurationSection node = this.config.getConfigurationSection("adventure." + name);
+			boolean enabled = this.config.getBoolean("adventure." + name + ".enabled", true);
 			if (enabled) {
 				MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
 				if (!noreset)
@@ -110,11 +110,11 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 	@Override
 	public boolean createWorld(String name) {
 		//first write it to the config, then load
-		this.config.set("adventureworlds." + name + ".enabled", true);
+		this.config.set("adventure." + name + ".enabled", true);
 		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.config.contains("adventureworlds." + name)) {
-			ConfigurationSection node = this.config.getConfigurationSection("adventureworlds." + name);
-			boolean enabled = this.config.getBoolean("adventureworlds." + name + ".enabled", true);
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.config.contains("adventure." + name)) {
+			ConfigurationSection node = this.config.getConfigurationSection("adventure." + name);
+			boolean enabled = this.config.getBoolean("adventure." + name + ".enabled", true);
 			if (enabled) {
 				MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
 				mvawi.scheduleWriteTemplate();
@@ -132,11 +132,11 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 	public void createWorldWithNotifications(String name, CommandSender sender) {
 		sender.sendMessage("Converting world '" + name + "' into an AdventureWorld...");
 		//first write it to the config, then load
-		this.config.set("adventureworlds." + name + ".enabled", true);
+		this.config.set("adventure." + name + ".enabled", true);
 		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.config.contains("adventure." + name)) {
-			ConfigurationSection node = this.config.getConfigurationSection("adventureworlds." + name);
-			boolean enabled = this.config.getBoolean("adventureworlds." + name + ".enabled", true);
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && !this.config.contains("adventure." + name)) {
+			ConfigurationSection node = this.config.getConfigurationSection("adventure." + name);
+			boolean enabled = this.config.getBoolean("adventure." + name + ".enabled", true);
 			if (enabled) {
 				MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
 				mvawi.scheduleWriteTemplate();
@@ -176,7 +176,7 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 		MVAResetListener.addTask(name, new Runnable() {
 			public void run() {
 				getCore().getMVWorldManager().unloadWorld(name);
-				config.set("adventureworlds." + name, null);
+				config.set("adventure." + name, null);
 				File serverFolder = new File(plugin.getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
 				File templateFile = new File(serverFolder, template);
 				FileUtils.deleteFolder(templateFile);
