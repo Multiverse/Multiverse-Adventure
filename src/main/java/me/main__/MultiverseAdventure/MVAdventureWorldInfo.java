@@ -5,8 +5,7 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.util.config.ConfigurationNode;
-
+import org.bukkit.configuration.ConfigurationSection;
 import me.main__.MultiverseAdventure.event.MVAWResetEvent;
 import me.main__.MultiverseAdventure.event.MVAWResetFinishedEvent;
 import me.main__.MultiverseAdventure.listeners.MVAWorldListener;
@@ -49,7 +48,7 @@ public final class MVAdventureWorldInfo {
 		activationTaskId = -1;
 	}
 	
-	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventure plugin, ConfigurationNode config) {
+	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventure plugin, ConfigurationSection config) {
 		this.world = world;
 		this.plugin = plugin;
 		active = false;

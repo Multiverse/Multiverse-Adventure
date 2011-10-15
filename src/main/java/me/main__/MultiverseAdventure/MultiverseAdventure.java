@@ -20,10 +20,10 @@ import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVPlugin;
@@ -44,7 +44,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     
     private HashMap<String, MVAdventureWorldInfo> adventureWorlds;
 
-    private Configuration MVAConfig;
+    private FileConfiguration MVAConfig;
     private final static int requiresProtocol = 5;
 
     public void onLoad() {
@@ -142,7 +142,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
 	private void loadConfig() {
 		//new MVPDefaultConfiguration(getDataFolder(), "config.yml", this.migrator);
-        this.MVAConfig = this.getConfiguration();
+        this.MVAConfig = this.getConfig();
         loadWorlds();
 	}
 	
@@ -187,8 +187,8 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 	 */
 	public boolean tryEnableWorld(String name, boolean noreset) {
 		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAConfig.getKeys("adventure") != null) && this.MVAConfig.getKeys("adventure").contains(name)) {
-			ConfigurationNode node = this.MVAConfig.getNode("adventure." + name);
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.MVAConfig.contains("adventure") && this.MVAConfig.contains("adventure." + name)) {
+			ConfigurationSection node = this.MVAConfig.getConfigurationSection("adventure." + name);
 			boolean enabled = this.MVAConfig.getBoolean("adventure." + name + ".enabled", true);
 			if (enabled) {
 				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, this, node);
@@ -225,10 +225,10 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 	 */
 	public boolean createWorld(String name) {
 		//first write it to the config, then load
-		this.MVAConfig.setProperty("adventure." + name + ".enabled", true);
+		this.MVAConfig.set("adventure." + name + ".enabled", true);
 		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAConfig.getKeys("adventure") != null) && this.MVAConfig.getKeys("adventure").contains(name)) {
-			ConfigurationNode node = this.MVAConfig.getNode("adventure." + name);
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.MVAConfig.contains("adventure") && this.MVAConfig.contains("adventure" + name)) {
+			ConfigurationSection node = this.MVAConfig.getConfigurationSection("adventure." + name);
 			boolean enabled = this.MVAConfig.getBoolean("adventure." + name + ".enabled", true);
 			if (enabled) {
 				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, this, node);
@@ -250,10 +250,10 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 	public void createWorldWithNotifications(String name, CommandSender sender) {
 		sender.sendMessage("Converting world '" + name + "' into an AdventureWorld...");
 		//first write it to the config, then load
-		this.MVAConfig.setProperty("adventure." + name + ".enabled", true);
+		this.MVAConfig.set("adventure." + name + ".enabled", true);
 		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && (this.MVAConfig.getKeys("adventure") != null) && this.MVAConfig.getKeys("adventure").contains(name)) {
-			ConfigurationNode node = this.MVAConfig.getNode("adventure." + name);
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.MVAConfig.contains("adventure") && this.MVAConfig.contains("adventure" + name)) {
+			ConfigurationSection node = this.MVAConfig.getConfigurationSection("adventure." + name);
 			boolean enabled = this.MVAConfig.getBoolean("adventure." + name + ".enabled", true);
 			if (enabled) {
 				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, this, node);
@@ -298,7 +298,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 		MVAResetListener.addTask(name, new Runnable() {
 			public void run() {
 				getCore().getMVWorldManager().unloadWorld(name);
-				MVAConfig.removeProperty("adventure." + name);
+				MVAConfig.set("adventure." + name, null);
 				File serverFolder = new File(getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
 				File templateFile = new File(serverFolder, template);
 				FileUtils.deleteFolder(templateFile);
@@ -461,6 +461,12 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 	}
 
 	public void saveConfig() {
-        this.MVAConfig.save();
+        try {
+			this.MVAConfig.save(new File(getDataFolder(), "config.yml"));
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.log(Level.SEVERE, "Couldn't save the config.yml! Disabling...");
+			this.getServer().getPluginManager().disablePlugin(this);
+		}
 	}
 }
