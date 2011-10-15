@@ -4,30 +4,21 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-
+import com.onarandombox.MultiverseAdventure.api.AdventureWorldsManager;
 import com.onarandombox.MultiverseAdventure.commands.*;
-import com.onarandombox.MultiverseAdventure.listeners.MVAConfigReloadListener;
-import com.onarandombox.MultiverseAdventure.listeners.MVAPlayerListener;
-import com.onarandombox.MultiverseAdventure.listeners.MVAPluginListener;
-import com.onarandombox.MultiverseAdventure.listeners.MVAResetListener;
-import com.onarandombox.MultiverseAdventure.listeners.MVAWorldListener;
-import com.onarandombox.MultiverseAdventure.util.FileUtils;
+import com.onarandombox.MultiverseAdventure.listeners.*;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVPlugin;
-import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import com.onarandombox.MultiverseCore.commands.HelpCommand;
 import com.onarandombox.MultiverseCore.utils.DebugLog;
 import com.pneumaticraft.commandhandler.CommandHandler;
@@ -36,15 +27,16 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 	private static MultiverseAdventure instance;
 
 	private static final Logger log = Logger.getLogger("Minecraft");
-    private static final String logPrefix = "[Multiverse-Adventure] ";
+    private static final String logPrefix = "[Multiverse-AdventureWorlds] ";
     protected static DebugLog debugLog;
     private MultiverseCore core;
 
     private CommandHandler commandHandler;
     
-    private HashMap<String, MVAdventureWorldInfo> adventureWorlds;
+    //private HashMap<String, MVAdventureWorldInfo> adventureWorlds;
+    private AdventureWorldsManager manager;
 
-    private FileConfiguration MVAConfig;
+    private FileConfiguration MVAWConfig;
     private final static int requiresProtocol = 5;
 
     public void onLoad() {
@@ -86,7 +78,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         }
         if (this.core.getProtocolVersion() < requiresProtocol) {
             log.severe(logPrefix + "Your Multiverse-Core is OUT OF DATE");
-            log.severe(logPrefix + "This version of Multiverse-Adventure requires Protocol Level: " + requiresProtocol);
+            log.severe(logPrefix + "This version of AdventureWorlds requires Protocol Level: " + requiresProtocol);
             log.severe(logPrefix + "Your of Core Protocol Level is: " + this.core.getProtocolVersion());
             log.severe(logPrefix + "Grab an updated copy at: ");
             log.severe(logPrefix + "http://bukkit.onarandombox.com/?dir=multiverse-core");
@@ -94,7 +86,8 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
             return;
         }
         
-        this.adventureWorlds = new HashMap<String, MVAdventureWorldInfo>();
+        //this.adventureWorlds = new HashMap<String, MVAdventureWorldInfo>();
+        manager = new SimpleAdventureWorldsManager(this, core, MVAWConfig);
 
         this.loadConfig();
 
@@ -107,7 +100,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        debugLog = new DebugLog("Multiverse-Adventure", getDataFolder() + File.separator + "debug.log");
+        debugLog = new DebugLog("Multiverse-AdventureWorlds", getDataFolder() + File.separator + "debug.log");
         this.core.incrementPluginCount();
 
         // Register our commands
@@ -142,199 +135,8 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
 	private void loadConfig() {
 		//new MVPDefaultConfiguration(getDataFolder(), "config.yml", this.migrator);
-        this.MVAConfig = this.getConfig();
-        loadWorlds();
-	}
-	
-	/**
-	 * Iterates through all loaded MVWorlds and enables Adventure
-	 */
-	public void loadWorlds() {
-		for (MultiverseWorld world : this.getCore().getMVWorldManager().getMVWorlds()) {
-        	tryEnableWorld(world.getName());
-        }
-	}
-	
-	/**
-	 * Disables all AdventureWorlds
-	 */
-	public void unloadWorlds() {
-		for (MVAdventureWorldInfo world : this.adventureWorlds.values()) {
-			disableWorld(world.getName());
-		}
-		this.adventureWorlds.clear(); //safety
-	}
-	
-	/**
-	 * Tries to enable an AdventureWorld that's already known to Multiverse-Adventure.
-	 * @param name
-	 * The name of that world.
-	 * @return
-	 * True if success, false if failed.
-	 */
-	public boolean tryEnableWorld(String name) {
-		return tryEnableWorld(name, false);
-	}
-	
-	/**
-	 * Tries to enable an AdventureWorld that's already known to Multiverse-Adventure.
-	 * @param name
-	 * The name of that world.
-	 * @param noreset
-	 * If the world shouldn't be reset.
-	 * @return
-	 * True if success, false if failed.
-	 */
-	public boolean tryEnableWorld(String name, boolean noreset) {
-		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.MVAConfig.contains("adventure") && this.MVAConfig.contains("adventure." + name)) {
-			ConfigurationSection node = this.MVAConfig.getConfigurationSection("adventure." + name);
-			boolean enabled = this.MVAConfig.getBoolean("adventure." + name + ".enabled", true);
-			if (enabled) {
-				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, this, node);
-				if (!noreset)
-					mvawi.resetNow();
-				this.adventureWorlds.put(name, mvawi);
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Tries to disable an AdventureWorld.
-	 * @param name
-	 * The name of the world.
-	 * @return
-	 * True if success, false if failed.
-	 */
-	public boolean disableWorld(String name) {
-		if (this.adventureWorlds.containsKey(name)) {
-			this.adventureWorlds.remove(name);
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * Converts a normal world into an adventure world
-	 * @param name
-	 * The name of the world
-	 * @return
-	 * True if success, false if failed.
-	 */
-	public boolean createWorld(String name) {
-		//first write it to the config, then load
-		this.MVAConfig.set("adventure." + name + ".enabled", true);
-		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.MVAConfig.contains("adventure") && this.MVAConfig.contains("adventure" + name)) {
-			ConfigurationSection node = this.MVAConfig.getConfigurationSection("adventure." + name);
-			boolean enabled = this.MVAConfig.getBoolean("adventure." + name + ".enabled", true);
-			if (enabled) {
-				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, this, node);
-				mvawi.scheduleWriteTemplate();
-				this.adventureWorlds.put(name, mvawi);
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Converts a normal world into an adventure world and sends notifications to a CommandSender
-	 * @param name
-	 * The name of the world
-	 * @param sender
-	 * The CommandSender that receives the notifications
-	 */
-	public void createWorldWithNotifications(String name, CommandSender sender) {
-		sender.sendMessage("Converting world '" + name + "' into an AdventureWorld...");
-		//first write it to the config, then load
-		this.MVAConfig.set("adventure." + name + ".enabled", true);
-		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.MVAConfig.contains("adventure") && this.MVAConfig.contains("adventure" + name)) {
-			ConfigurationSection node = this.MVAConfig.getConfigurationSection("adventure." + name);
-			boolean enabled = this.MVAConfig.getBoolean("adventure." + name + ".enabled", true);
-			if (enabled) {
-				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, this, node);
-				mvawi.scheduleWriteTemplate();
-				this.adventureWorlds.put(name, mvawi);
-				return;
-			}
-		}
-	}
-	
-	/**
-	 * Converts an adventure world back into a normal world.
-	 * @param name
-	 * The name of the world.
-	 */
-	public void deleteWorld(final String name) {
-		deleteWorld(name, null);
-	}
-	
-	/**
-	 * Converts an adventure world back into a normal world and sends notifications to a CommandSender.
-	 * @param name
-	 * The name of the world.
-	 * @param sender
-	 * The CommandSender that receives notifications
-	 */
-	public void deleteWorld(final String name, final CommandSender sender) {
-		final String template;
-		if (this.getMVAInfo(name) == null) {
-			//idiots.
-			return;
-		}
-		else {
-			template = this.getMVAInfo(name).getTemplate();
-		}
-		
-		//reset, unload, modify the config and then load
-		this.getCore().getMVWorldManager().removePlayersFromWorld(name); // coming soon
-		this.getMVAInfo(name).resetNow();
-
-		//Now use our task-system to do the rest when the reset is finished.
-		MVAResetListener.addTask(name, new Runnable() {
-			public void run() {
-				getCore().getMVWorldManager().unloadWorld(name);
-				MVAConfig.set("adventure." + name, null);
-				File serverFolder = new File(getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
-				File templateFile = new File(serverFolder, template);
-				FileUtils.deleteFolder(templateFile);
-				getCore().getMVWorldManager().loadWorld(name);
-				
-				//notification
-				if (sender != null)
-					sender.sendMessage("Finished.");
-			}});
-		
-	}
-	
-	/**
-	 * Writes the current state of an AdventureWorld to the template.
-	 * @param name
-	 * The name of the world.
-	 */
-	public void flushWorld(String name) {
-		flushWorld(name, null);
-	}
-	
-	/**
-	 * Writes the current state of an AdventureWorld to the template and sends notifications to a CommandSender
-	 * @param name
-	 * The name of the world.
-	 * @param sender
-	 * The CommandSender that receives notifications
-	 * @return
-	 * True if success, false if failed.
-	 */
-	public boolean flushWorld(String name, CommandSender sender) {
-		if (this.getMVAInfo(name) == null) {
-			//idiots.
-			return false;
-		}
-		else return this.getMVAInfo(name).scheduleWriteTemplate(sender);
+        this.MVAWConfig = this.getConfig();
+        manager.loadWorlds();
 	}
 	
 	private void createDefaultPerms() {
@@ -408,7 +210,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
 	@Override
 	public String dumpVersionInfo(String buffer) {
-		buffer += logAndAddToPasteBinBuffer("Multiverse-Adventure Version: " + this.getDescription().getVersion());
+		buffer += logAndAddToPasteBinBuffer("Multiverse-AdventureWorlds Version: " + this.getDescription().getVersion());
         buffer += logAndAddToPasteBinBuffer("Bukkit Version: " + this.getServer().getVersion());
         //buffer += logAndAddToPasteBinBuffer("Loaded Portals: " + this.getPortalManager().getAllPortals().size());
         //buffer += logAndAddToPasteBinBuffer("Dumping Portal Values: (version " + this.getPortalsConfig().getString("version", "NOT SET") + ")");
@@ -422,7 +224,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
     private String logAndAddToPasteBinBuffer(String string) {
         this.log(Level.INFO, string);
-        return "[Multiverse-Adventure] " + string + "\n";
+        return "[Multiverse-AdventureWorlds] " + string + "\n";
     }
 
 	@Override
@@ -441,19 +243,8 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 	}
 
 	public void reloadConfigs() {
-		this.unloadWorlds();
+		manager.unloadWorlds();
 		this.loadConfig();
-	}
-	
-	/**
-	 * Gets the MVAdventureWorldInfo-Object of a world.
-	 * @param name
-	 * The name of the world.
-	 * @return
-	 * The MVAdventureWorldInfo-Object
-	 */
-	public MVAdventureWorldInfo getMVAInfo(String name) {
-		return this.adventureWorlds.get(name);
 	}
 	
 	public static MultiverseAdventure getInstance() {
@@ -462,11 +253,71 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
 	public void saveConfig() {
         try {
-			this.MVAConfig.save(new File(getDataFolder(), "config.yml"));
+			this.MVAWConfig.save(new File(this.getDataFolder(), "config.yml"));
 		} catch (IOException e) {
 			e.printStackTrace();
-			this.log(Level.SEVERE, "Couldn't save the config.yml! Disabling...");
+			this.log(Level.SEVERE, "Couldn't write to config.yml! Disabling...");
 			this.getServer().getPluginManager().disablePlugin(this);
 		}
+	}
+
+	public AdventureWorldsManager getAdventureWorldsManager() {
+		return manager;
+	}
+	
+	/**
+	 * @deprecated Use the AdventureWorldsManager instead
+	 */
+	@Deprecated
+	public MVAdventureWorldInfo getMVAInfo(String fromWorldName) {
+		return this.getAdventureWorldsManager().getMVAInfo(fromWorldName);
+	}
+
+	/**
+	 * @deprecated Use the AdventureWorldsManager instead
+	 */
+	@Deprecated
+	public void tryEnableWorld(String name) {
+		this.getAdventureWorldsManager().tryEnableWorld(name);
+	}
+
+	/**
+	 * @deprecated Use the AdventureWorldsManager instead
+	 */
+	@Deprecated
+	public void tryEnableWorld(String name, boolean noreset) {
+		this.getAdventureWorldsManager().tryEnableWorld(name, noreset);
+	}
+
+	/**
+	 * @deprecated Use the AdventureWorldsManager instead
+	 */
+	@Deprecated
+	public void disableWorld(String name) {
+		this.getAdventureWorldsManager().disableWorld(name);
+	}
+
+	/**
+	 * @deprecated Use the AdventureWorldsManager instead
+	 */
+	@Deprecated
+	public void deleteWorld(String world, CommandSender sender) {
+		this.getAdventureWorldsManager().deleteWorld(world, sender);
+	}
+
+	/**
+	 * @deprecated Use the AdventureWorldsManager instead
+	 */
+	@Deprecated
+	public void createWorldWithNotifications(String world, CommandSender sender) {
+		this.getAdventureWorldsManager().createWorldWithNotifications(world, sender);
+	}
+
+	/**
+	 * @deprecated Use the AdventureWorldsManager instead
+	 */
+	@Deprecated
+	public void flushWorld(String world, CommandSender sender) {
+		this.getAdventureWorldsManager().flushWorld(world, sender);
 	}
 }

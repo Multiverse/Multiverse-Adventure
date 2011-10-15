@@ -7,13 +7,13 @@ import org.bukkit.event.Event;
  * Called when a world is going to be reset. Cancellable.
  * @author main()
  */
-public class MVAWResetEvent extends Event implements Cancellable {
+public class MVAResetEvent extends Event implements Cancellable {
 	private static final long serialVersionUID = -8202789420260485333L;
 	private boolean cancelled;
 	
 	private final String world;
 	
-	public MVAWResetEvent(String worldName) {
+	public MVAResetEvent(String worldName) {
 		super("MVAWReset");
 		world = worldName;
 	}

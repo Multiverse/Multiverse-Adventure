@@ -6,9 +6,10 @@ import java.util.logging.Level;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.util.config.ConfigurationNode;
 
-import com.onarandombox.MultiverseAdventure.event.MVAWResetEvent;
-import com.onarandombox.MultiverseAdventure.event.MVAWResetFinishedEvent;
+import com.onarandombox.MultiverseAdventure.event.MVAResetEvent;
+import com.onarandombox.MultiverseAdventure.event.MVAResetFinishedEvent;
 import com.onarandombox.MultiverseAdventure.listeners.MVAWorldListener;
 import com.onarandombox.MultiverseAdventure.util.FileUtils;
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
@@ -48,21 +49,29 @@ public final class MVAdventureWorldInfo {
 		activationTaskId = -1;
 	}
 	
-	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventure plugin, ConfigurationSection config) {
+	public MVAdventureWorldInfo(MultiverseWorld world, MultiverseAdventure plugin, ConfigurationSection node) {
 		this.world = world;
 		this.plugin = plugin;
 		active = false;
 		
-		this.setTemplate(config.getString("template", "NAME.template")); // "NAME" will be replaced with the world's name
-		this.setActivationDelay(config.getInt("activationdelay", 10));
-		this.setResetDelay(config.getInt("resetdelay", 10));
-        MultiverseAdventure.getInstance().saveConfig();
+		this.setTemplate(node.getString("template", "NAME.template")); // "NAME" will be replaced with the world's name
+		this.setActivationDelay(node.getInt("activationdelay", 10));
+		this.setResetDelay(node.getInt("resetdelay", 10));
+        plugin.saveConfig();
 		
 		resetTaskId = -1;
 		activationTaskId = -1;
 	}
+	
+	public void saveTo(ConfigurationNode config) {
+		config.setProperty("enabled", true);
+		config.setProperty("template", this.template);
+		config.setProperty("activationdelay", activationdelay);
+		config.setProperty("resetdelay", resetdelay);
+		plugin.saveConfig();
+	}
 
-	public boolean isActive() {
+ 	public boolean isActive() {
 		return active;
 	}
 	
@@ -74,8 +83,10 @@ public final class MVAdventureWorldInfo {
 	}
 
 	/**
-	 * Sets the activation status DIRECTLY. Using this is NOT RECOMMENDED, use {@link #scheduleActivation()} instead.
+	 * Sets the activation state DIRECTLY. This is DEPRECATED!
 	 * @param active
+	 * The new activation state.
+	 * @deprecated Use {@link #scheduleActivation()} instead.
 	 */
 	@Deprecated
 	public void setActive(boolean active) {
@@ -182,7 +193,7 @@ public final class MVAdventureWorldInfo {
 	 * True if success, false if failed.
 	 */
 	public boolean scheduleWriteTemplate() {
-		return scheduleWriteTemplate(null);
+		return scheduleWriteTemplate(new TemplateWriter());
 	}
 	
 	/**
@@ -191,11 +202,32 @@ public final class MVAdventureWorldInfo {
 	 * A CommandSender that receives a notification after the work is done.
 	 * @return
 	 * True if success, false if failed.
+	 * @deprecated Use {@link #scheduleWriteTemplate(Runnable)} instead
 	 */
-	public boolean scheduleWriteTemplate(CommandSender sender) {
-		int id = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-				new TemplateWriter(sender));
+	public boolean scheduleWriteTemplate(final CommandSender sender) {
+		return scheduleWriteTemplate(new Callable<Void>() {
+			public Void call() throws Exception {
+				sender.sendMessage("Finished.");
+				return null;
+			}});
+	}
+
+	/**
+	 * Writes the current state of the world to the template. Useful for initializing.
+	 * @param onFinish
+	 * A Callable<Void> that's executed after the work is done.
+	 * @return
+	 * True if success, false if failed.
+	 */
+	public boolean scheduleWriteTemplate(Callable<Void> onFinish) {
+		return scheduleWriteTemplate(new TemplateWriter(onFinish));
+	}
+	
+	private boolean scheduleWriteTemplate(TemplateWriter tw) {
+		if (tw == null)
+			throw new IllegalArgumentException("tw can't be null!");
 		
+		int id = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, tw);
 		return id != -1;
 	}
 	
@@ -219,7 +251,7 @@ public final class MVAdventureWorldInfo {
 			plugin.log(Level.INFO, "Beginning reset of world '" + name + "'...");
 			
 			//now call the event
-			MVAWResetEvent resetEvent = new MVAWResetEvent(name);
+			MVAResetEvent resetEvent = new MVAResetEvent(name);
 			plugin.getServer().getPluginManager().callEvent(resetEvent);
 			if (resetEvent.isCancelled()) {
 				plugin.log(Level.INFO, "Reset of world '" + name + "' cancelled.");
@@ -295,7 +327,7 @@ public final class MVAdventureWorldInfo {
 			plugin.log(Level.INFO, "Reset of world '" + name + "' finished.");
 			
 			//call the event
-			plugin.getServer().getPluginManager().callEvent(new MVAWResetFinishedEvent(name));
+			plugin.getServer().getPluginManager().callEvent(new MVAResetFinishedEvent(name));
 		}
 
 		public ResetFinisher(String name) {
@@ -307,7 +339,7 @@ public final class MVAdventureWorldInfo {
 	 * Writes the current state of the world to the template. (ASYNC)
 	 */
 	private class TemplateWriter implements Runnable {
-		private final CommandSender client;
+		private final Callable<?> onFinish;
 		
 		@Override
 		public void run() {
@@ -324,23 +356,17 @@ public final class MVAdventureWorldInfo {
 			// 4. Load
 			plugin.getCore().getMVWorldManager().loadWorld(getName());
 			
-			if (client != null) {
+			if (onFinish != null) {
 				// 5. Notify
-				plugin.getServer().getScheduler().callSyncMethod(plugin, new Callable<Void>() {
-					@Override
-					public Void call() throws Exception {
-						client.sendMessage("Finished.");
-						return null;
-					}});
+				plugin.getServer().getScheduler().callSyncMethod(plugin, onFinish);
 			}
 		}
 		
 		/**
 		 * Create a new TemplateWriter.
 		 */
-		@SuppressWarnings("unused")
 		public TemplateWriter() {
-			client = null;
+			this.onFinish = null;
 		}
 		
 		/**
@@ -348,8 +374,8 @@ public final class MVAdventureWorldInfo {
 		 * @param client
 		 * The client
 		 */
-		public TemplateWriter(CommandSender client) {
-			this.client = client;
+		public TemplateWriter(Callable<Void> onFinish) {
+			this.onFinish = onFinish;
 		}
 	}
 }

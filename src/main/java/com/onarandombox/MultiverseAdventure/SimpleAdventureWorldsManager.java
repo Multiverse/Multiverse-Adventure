@@ -1,0 +1,213 @@
+package com.onarandombox.MultiverseAdventure;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.concurrent.Callable;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import com.onarandombox.MultiverseAdventure.api.AdventureWorldsManager;
+import com.onarandombox.MultiverseAdventure.listeners.MVAResetListener;
+import com.onarandombox.MultiverseAdventure.util.FileUtils;
+import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.onarandombox.MultiverseCore.api.MultiverseWorld;
+
+/**
+ * @author main()
+ */
+public class SimpleAdventureWorldsManager implements AdventureWorldsManager {
+    private final HashMap<String, MVAdventureWorldInfo> adventureWorlds;
+    private final MultiverseAdventure plugin;
+    private final MultiverseCore core;
+    private final FileConfiguration config;
+    
+	public SimpleAdventureWorldsManager(MultiverseAdventure plugin, MultiverseCore core, FileConfiguration config) {
+    	this.adventureWorlds = new HashMap<String, MVAdventureWorldInfo>();
+    	this.plugin = plugin;
+    	this.core = core;
+    	this.config = config;
+    }
+	
+	protected MultiverseCore getCore() {
+		return core;
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#getMVAWInfo(java.lang.String)
+	 */
+	@Override
+	public MVAdventureWorldInfo getMVAInfo(String name) {
+		return this.adventureWorlds.get(name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#loadWorlds()
+	 */
+	@Override
+	public void loadWorlds() {
+		for (MultiverseWorld world : this.getCore().getMVWorldManager().getMVWorlds()) {
+        	tryEnableWorld(world.getName());
+        }
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#unloadWorlds()
+	 */
+	@Override
+	public void unloadWorlds() {
+		for (MVAdventureWorldInfo world : this.adventureWorlds.values()) {
+			disableWorld(world.getName());
+		}
+		this.adventureWorlds.clear(); //safety
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#tryEnableWorld(java.lang.String)
+	 */
+	@Override
+	public boolean tryEnableWorld(String name) {
+		return tryEnableWorld(name, false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#tryEnableWorld(java.lang.String, boolean)
+	 */
+	@Override
+	public boolean tryEnableWorld(String name, boolean noreset) {
+		MultiverseWorld mvworld;
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.config.contains("adventureworlds." + name)) {
+			ConfigurationSection node = this.config.getConfigurationSection("adventureworlds." + name);
+			boolean enabled = this.config.getBoolean("adventureworlds." + name + ".enabled", true);
+			if (enabled) {
+				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, plugin, node);
+				if (!noreset)
+					mvawi.resetNow();
+				this.adventureWorlds.put(name, mvawi);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#disableWorld(java.lang.String)
+	 */
+	@Override
+	public boolean disableWorld(String name) {
+		if (this.adventureWorlds.containsKey(name)) {
+			this.adventureWorlds.remove(name);
+			return true;
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#createWorld(java.lang.String)
+	 */
+	@Override
+	public boolean createWorld(String name) {
+		//first write it to the config, then load
+		this.config.set("adventureworlds." + name + ".enabled", true);
+		MultiverseWorld mvworld;
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.config.contains("adventureworlds." + name)) {
+			ConfigurationSection node = this.config.getConfigurationSection("adventureworlds." + name);
+			boolean enabled = this.config.getBoolean("adventureworlds." + name + ".enabled", true);
+			if (enabled) {
+				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, plugin, node);
+				mvawi.scheduleWriteTemplate();
+				this.adventureWorlds.put(name, mvawi);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#createWorldWithNotifications(java.lang.String, org.bukkit.command.CommandSender)
+	 */
+	@Override
+	public void createWorldWithNotifications(String name, CommandSender sender) {
+		sender.sendMessage("Converting world '" + name + "' into an AdventureWorld...");
+		//first write it to the config, then load
+		this.config.set("adventureworlds." + name + ".enabled", true);
+		MultiverseWorld mvworld;
+		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.config.contains("adventure." + name)) {
+			ConfigurationSection node = this.config.getConfigurationSection("adventureworlds." + name);
+			boolean enabled = this.config.getBoolean("adventureworlds." + name + ".enabled", true);
+			if (enabled) {
+				MVAdventureWorldInfo mvawi = new MVAdventureWorldInfo(mvworld, plugin, node);
+				mvawi.scheduleWriteTemplate();
+				this.adventureWorlds.put(name, mvawi);
+				return;
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#deleteWorld(java.lang.String)
+	 */
+	@Override
+	public void deleteWorld(final String name) {
+		deleteWorld(name, null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#deleteWorld(java.lang.String, org.bukkit.command.CommandSender)
+	 */
+	@Override
+	public void deleteWorld(final String name, final CommandSender sender) {
+		final String template;
+		if (this.getMVAInfo(name) == null) {
+			//idiots.
+			return;
+		}
+		else {
+			template = this.getMVAInfo(name).getTemplate();
+		}
+		
+		//reset, unload, modify the config and then load
+		this.getCore().getMVWorldManager().removePlayersFromWorld(name); // coming soon
+		this.getMVAInfo(name).resetNow();
+
+		//Now use our task-system to do the rest when the reset is finished.
+		MVAResetListener.addTask(name, new Runnable() {
+			public void run() {
+				getCore().getMVWorldManager().unloadWorld(name);
+				config.set("adventureworlds." + name, null);
+				File serverFolder = new File(plugin.getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
+				File templateFile = new File(serverFolder, template);
+				FileUtils.deleteFolder(templateFile);
+				getCore().getMVWorldManager().loadWorld(name);
+				
+				//notification
+				if (sender != null)
+					sender.sendMessage("Finished.");
+			}});
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#flushWorld(java.lang.String)
+	 */
+	@Override
+	public void flushWorld(String name) {
+		flushWorld(name, null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#flushWorld(java.lang.String, org.bukkit.command.CommandSender)
+	 */
+	@Override
+	public boolean flushWorld(String name, final CommandSender sender) {
+		if (this.getMVAInfo(name) == null) {
+			//idiots.
+			return false;
+		}
+		else return this.getMVAInfo(name).scheduleWriteTemplate(new Callable<Void>() {
+			public Void call() throws Exception {
+				sender.sendMessage("Finished.");
+				return null;
+			}});
+	}
+}
