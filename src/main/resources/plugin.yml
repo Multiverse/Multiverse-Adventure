@@ -28,3 +28,9 @@ commands:
   mvareset:
     description: Generic Multiverse-Adventure Command
     usage: /<command>
+  mvaset:
+    description: Generic Multiverse-Adventure Command
+    usage: /<command>
+  mvasettemplate:
+    description: Generic Multiverse-Adventure Command
+    usage: /<command>

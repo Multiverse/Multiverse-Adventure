@@ -395,8 +395,8 @@ public final class MVAdventureWorld implements AdventureWorld {
 			// 3. Copy
 			FileUtils.copyFolder(worldFile, templateFile);
 			// 4. Load
-			MVAWorldListener.addPass(getName());
 			plugin.getCore().getMVWorldManager().loadWorld(getName());
+			MVAWorldListener.addPass(getName());
 			
 			if (onFinish != null) {
 				// 5. Notify

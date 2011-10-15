@@ -109,41 +109,47 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 	 */
 	@Override
 	public boolean createWorld(String name) {
+		MultiverseWorld mvworld;
+		if ((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) == null) {
+			return true;
+		}
+		
+
 		//first write it to the config, then load
 		this.config.set("adventure." + name + ".enabled", true);
-		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && this.config.contains("adventure." + name)) {
-			ConfigurationSection node = this.config.getConfigurationSection("adventure." + name);
-			boolean enabled = this.config.getBoolean("adventure." + name + ".enabled", true);
-			if (enabled) {
-				MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
-				mvawi.scheduleWriteTemplate();
-				this.adventureWorlds.put(name, mvawi);
-				return true;
-			}
-		}
-		return false;
+
+		ConfigurationSection node = this.config.getConfigurationSection("adventure." + name);
+		MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
+		mvawi.scheduleWriteTemplate();
+		this.adventureWorlds.put(name, mvawi);
+		return true;
 	}
 	
 	/* (non-Javadoc)
 	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#createWorldWithNotifications(java.lang.String, org.bukkit.command.CommandSender)
 	 */
 	@Override
-	public void createWorldWithNotifications(String name, CommandSender sender) {
-		sender.sendMessage("Converting world '" + name + "' into an AdventureWorld...");
-		//first write it to the config, then load
-		this.config.set("adventure." + name + ".enabled", true);
+	public void createWorldWithNotifications(String name, final CommandSender sender) {
 		MultiverseWorld mvworld;
-		if (((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) != null) && !this.config.contains("adventure." + name)) {
-			ConfigurationSection node = this.config.getConfigurationSection("adventure." + name);
-			boolean enabled = this.config.getBoolean("adventure." + name + ".enabled", true);
-			if (enabled) {
-				MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
-				mvawi.scheduleWriteTemplate();
-				this.adventureWorlds.put(name, mvawi);
-				return;
-			}
+		if ((mvworld = this.getCore().getMVWorldManager().getMVWorld(name)) == null) {
+			sender.sendMessage("That world doesn't exist...");
+			return;
 		}
+		
+		sender.sendMessage("Converting world '" + name + "' into an AdventureWorld...");
+		
+		//first write it to the config, then load
+		
+		this.config.set("adventure." + name + ".enabled", true);
+
+		ConfigurationSection node = this.config.getConfigurationSection("adventure." + name);
+		MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
+		mvawi.scheduleWriteTemplate(new Callable<Void> () {
+			public Void call() throws Exception {
+				sender.sendMessage("Finished.");
+				return null;
+			}});
+		this.adventureWorlds.put(name, mvawi);
 	}
 	
 	/* (non-Javadoc)
