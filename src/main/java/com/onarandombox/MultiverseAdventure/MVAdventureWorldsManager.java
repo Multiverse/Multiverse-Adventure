@@ -35,16 +35,16 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 		return core;
 	}
 	
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#getMVAWInfo(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public AdventureWorld getMVAInfo(String name) {
 		return this.adventureWorlds.get(name);
 	}
 	
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#loadWorlds()
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void loadWorlds() {
@@ -53,8 +53,8 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
         }
 	}
 	
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#unloadWorlds()
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void unloadWorlds() {
@@ -64,16 +64,16 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 		this.adventureWorlds.clear(); //safety
 	}
 	
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#tryEnableWorld(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean tryEnableWorld(String name) {
 		return tryEnableWorld(name, false);
 	}
 	
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#tryEnableWorld(java.lang.String, boolean)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean tryEnableWorld(String name, boolean noreset) {
@@ -92,8 +92,8 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#disableWorld(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean disableWorld(String name) {
@@ -104,8 +104,8 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 		return false;
 	}
 	
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#createWorld(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean createWorld(String name) {
@@ -125,8 +125,8 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#createWorldWithNotifications(java.lang.String, org.bukkit.command.CommandSender)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void createWorldWithNotifications(String name, final CommandSender sender) {
@@ -152,16 +152,16 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 		this.adventureWorlds.put(name, mvawi);
 	}
 	
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#deleteWorld(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void deleteWorld(final String name) {
 		deleteWorld(name, null);
 	}
 	
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#deleteWorld(java.lang.String, org.bukkit.command.CommandSender)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void deleteWorld(final String name, final CommandSender sender) {
@@ -195,16 +195,16 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#flushWorld(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void flushWorld(String name) {
 		flushWorld(name, null);
 	}
 	
-	/* (non-Javadoc)
-	 * @see me.main__.MultiverseAdventureWorlds.AdventureWorldsManager#flushWorld(java.lang.String, org.bukkit.command.CommandSender)
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean flushWorld(String name, final CommandSender sender) {
