@@ -4,7 +4,7 @@
 
   <groupId>com.onarandombox.multiverseadventure</groupId>
   <artifactId>Multiverse-Adventure</artifactId>
-  <version>1.0</version>
+  <version>2.1</version>
   <packaging>jar</packaging>
   <name>Multiverse-Adventure</name>
   <description>Multiverse Adventure module</description>
