@@ -51,8 +51,8 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     }
 
     public static void staticDebugLog(Level level, String msg) {
-        log.log(level, "[MVPortals-Debug] " + msg);
-        debugLog.log(level, "[MVPortals-Debug] " + msg);
+        log.log(level, "[MVAdventure-Debug] " + msg);
+        debugLog.log(level, "[MVAdventure-Debug] " + msg);
     }
     
 	@Override
