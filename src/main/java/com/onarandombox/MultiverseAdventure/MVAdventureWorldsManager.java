@@ -1,6 +1,7 @@
 package com.onarandombox.MultiverseAdventure;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 
@@ -19,13 +20,13 @@ import com.onarandombox.MultiverseCore.api.MultiverseWorld;
  * @author main()
  */
 public class MVAdventureWorldsManager implements AdventureWorldsManager {
-    private final HashMap<String, MVAdventureWorld> adventureWorlds;
+    private final HashMap<String, AdventureWorld> adventureWorlds;
     private final MultiverseAdventure plugin;
     private final MultiverseCore core;
     private final FileConfiguration config;
     
 	public MVAdventureWorldsManager(MultiverseAdventure plugin, MultiverseCore core, FileConfiguration config) {
-    	this.adventureWorlds = new HashMap<String, MVAdventureWorld>();
+    	this.adventureWorlds = new HashMap<String, AdventureWorld>();
     	this.plugin = plugin;
     	this.core = core;
     	this.config = config;
@@ -223,8 +224,15 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 	 * {@inheritDoc}
 	 */
 	public void saveAllTo(ConfigurationSection config) {
-		for (MVAdventureWorld aw : adventureWorlds.values()) {
+		for (AdventureWorld aw : adventureWorlds.values()) {
 			aw.saveTo(config.getConfigurationSection(aw.getName()));
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Collection<AdventureWorld> getMVAWorlds() {
+		return adventureWorlds.values();
 	}
 }

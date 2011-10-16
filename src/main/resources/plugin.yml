@@ -34,3 +34,6 @@ commands:
   mvasettemplate:
     description: Generic Multiverse-Adventure Command
     usage: /<command>
+  mvalist:
+    description: Generic Multiverse-Adventure Command
+    usage: /<command>  

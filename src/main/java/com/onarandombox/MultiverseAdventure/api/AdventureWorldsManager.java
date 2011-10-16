@@ -1,5 +1,7 @@
 package com.onarandombox.MultiverseAdventure.api;
 
+import java.util.Collection;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -112,5 +114,7 @@ public interface AdventureWorldsManager {
 	 * Saves all AdventureWorlds to the given ConfigurationSection
 	 */
 	public abstract void saveAllTo(ConfigurationSection config);
+
+	public abstract Collection<AdventureWorld> getMVAWorlds();
 
 }
