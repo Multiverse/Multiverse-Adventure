@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -30,6 +31,8 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
     	this.plugin = plugin;
     	this.core = core;
     	this.config = config;
+    	
+		this.plugin.log(Level.FINER, "A new MVAdventureWorldsManager was created!");
     }
 	
 	protected MultiverseCore getCore() {
@@ -149,7 +152,7 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 			public Void call() throws Exception {
 				sender.sendMessage("Finished.");
 				return null;
-			}});
+			}}, null);
 		this.adventureWorlds.put(name, mvawi);
 	}
 	
@@ -217,7 +220,7 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 			public Void call() throws Exception {
 				sender.sendMessage("Finished.");
 				return null;
-			}});
+			}}, null);
 	}
 
 	/**

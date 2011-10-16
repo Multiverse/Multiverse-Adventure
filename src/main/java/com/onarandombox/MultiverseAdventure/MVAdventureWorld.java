@@ -47,6 +47,8 @@ public final class MVAdventureWorld implements AdventureWorld {
 		
 		resetTaskId = -1;
 		activationTaskId = -1;
+		
+		this.plugin.log(Level.FINER, "A new MVAdventureWorld-Object was created!");
 	}
 	
 	public MVAdventureWorld(MultiverseWorld world, MultiverseAdventure plugin, ConfigurationSection node) {
@@ -61,6 +63,8 @@ public final class MVAdventureWorld implements AdventureWorld {
 		
 		resetTaskId = -1;
 		activationTaskId = -1;
+		
+		this.plugin.log(Level.FINER, "A new MVAdventureWorld-Object was created!");
 	}
 	
 	/**
@@ -172,6 +176,8 @@ public final class MVAdventureWorld implements AdventureWorld {
 	 */
 	@Override
 	public boolean scheduleReset() {
+		plugin.log(Level.FINER, "Scheduling reset of world '" + this.getName() + "' ...");
+		
 		resetTaskId = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
 				new ResetPreparer(this), getResetDelay() * 20);
 			//  resetdelay is in seconds and with 20 ticks per second we have to take this * 20
@@ -184,6 +190,8 @@ public final class MVAdventureWorld implements AdventureWorld {
 	 */
 	@Override
 	public void resetNow() {
+		plugin.log(Level.FINER, "Resetting world '" + this.getName() + "' NOW!");
+		
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ResetPreparer(this));
 	}
 	
@@ -193,6 +201,8 @@ public final class MVAdventureWorld implements AdventureWorld {
 	@Override
 	public void cancelReset() {
 		if (isResetting()) {
+			plugin.log(Level.FINER, "Cancelling reset of world '" + this.getName() + "' ...");
+
 			plugin.getServer().getScheduler().cancelTask(resetTaskId);
 		}
 	}
@@ -202,6 +212,8 @@ public final class MVAdventureWorld implements AdventureWorld {
 	 */
 	@Override
 	public void scheduleActivation() {
+		plugin.log(Level.FINER, "Scheduling activation of world '" + this.getName() + "' ...");
+		
 		if (getActivationDelay() == 0) {
 			active = true;
 			return;
@@ -220,6 +232,8 @@ public final class MVAdventureWorld implements AdventureWorld {
 	@Override
 	public void cancelActivation() {
 		if (isActivating()) {
+			plugin.log(Level.FINER, "Cancelling activation of world '" + this.getName() + "' ...");
+			
 			plugin.getServer().getScheduler().cancelTask(activationTaskId);
 		}
 	}
@@ -258,13 +272,24 @@ public final class MVAdventureWorld implements AdventureWorld {
 
 	/**
 	 * {@inheritDoc}
+	 * @deprecated Use {@link #scheduleWriteTemplate(Callable<Void>,Callable<Void>)} instead
 	 */
 	@Override
 	public boolean scheduleWriteTemplate(Callable<Void> onFinish) {
-		return scheduleWriteTemplate(new TemplateWriter(onFinish));
+		return scheduleWriteTemplate(onFinish, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean scheduleWriteTemplate(Callable<Void> onFinish, Callable<Void> onFail) {
+		return scheduleWriteTemplate(new TemplateWriter(onFinish, onFail));
 	}
 	
 	private boolean scheduleWriteTemplate(TemplateWriter tw) {
+		plugin.log(Level.FINER, "Scheduling a TemplateWriter for world '" + this.getName() + "' ...");
+		
 		if (tw == null)
 			throw new IllegalArgumentException("tw can't be null!");
 		
@@ -381,6 +406,7 @@ public final class MVAdventureWorld implements AdventureWorld {
 	 */
 	private class TemplateWriter implements Runnable {
 		private final Callable<?> onFinish;
+		private final Callable<Void> onFail;
 		
 		@Override
 		public void run() {
@@ -391,9 +417,19 @@ public final class MVAdventureWorld implements AdventureWorld {
 			// 1. Unload
 			plugin.getCore().getMVWorldManager().unloadWorld(getName());
 			// 2. Remove template (if exists)
-			FileUtils.deleteFolder(templateFile);
+			if (!FileUtils.deleteFolder(templateFile)) {
+				//Damn.
+				plugin.log(Level.SEVERE, "TemplateWriter: Couldn't delete the template!");
+				onFail();
+				return; //failed...
+			}
 			// 3. Copy
-			FileUtils.copyFolder(worldFile, templateFile);
+			if (!FileUtils.copyFolder(worldFile, templateFile)) {
+				//Damn.
+				plugin.log(Level.SEVERE, "TemplateWriter: Couldn't copy the template!");
+				onFail();
+				return; //failed...
+			}
 			// 4. Load
 			plugin.getCore().getMVWorldManager().loadWorld(getName());
 			MVAWorldListener.addPass(getName());
@@ -404,18 +440,25 @@ public final class MVAdventureWorld implements AdventureWorld {
 			}
 		}
 		
+		private void onFail() {
+			plugin.log(Level.SEVERE, "TemplateWriter: Failed!");
+			plugin.getServer().getScheduler().callSyncMethod(plugin, onFail);
+		}
+		
 		/**
 		 * Create a new TemplateWriter.
 		 */
 		public TemplateWriter() {
 			this.onFinish = null;
+			this.onFail = null;
 		}
 		
 		/**
 		 * Create a new TemplateWriter that does something after the work is done.
 		 */
-		public TemplateWriter(Callable<Void> onFinish) {
+		public TemplateWriter(Callable<Void> onFinish, Callable<Void> onFail) {
 			this.onFinish = onFinish;
+			this.onFail = onFail;
 		}
 	}
 }

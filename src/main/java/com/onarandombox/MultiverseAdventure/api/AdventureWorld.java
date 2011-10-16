@@ -122,7 +122,20 @@ public interface AdventureWorld {
 	 * A Callable<Void> that's executed on the main thread after the work is done.
 	 * @return
 	 * True if success, false if failed.
+	 * @deprecated Use {@link #scheduleWriteTemplate(Callable<Void>,Callable<Void>)} instead
 	 */
+	@Deprecated
 	public abstract boolean scheduleWriteTemplate(Callable<Void> onFinish);
+
+	/**
+	 * Writes the current state of the world to the template. Useful for initializing.
+	 * @param onFinish
+	 * A Callable<Void> that's executed on the main thread after the work is done.
+	 * @param onFail
+	 * A Callable<Void> that's executed on the main thread when something went wrong.
+	 * @return
+	 * True if success, false if failed.
+	 */
+	public abstract boolean scheduleWriteTemplate(Callable<Void> onFinish, Callable<Void> onFail);
 
 }
