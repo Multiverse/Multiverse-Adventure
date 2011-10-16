@@ -115,6 +115,9 @@ public interface AdventureWorldsManager {
 	 */
 	public abstract void saveAllTo(ConfigurationSection config);
 
+	/**
+	 * @return All loaded AdventureWorlds
+	 */
 	public abstract Collection<AdventureWorld> getMVAWorlds();
 
 }

@@ -9,7 +9,7 @@ import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 public interface AdventureWorld {
 
 	/**
-	 * Saves this to a ConfigurationNode
+	 * Saves this to a ConfigurationSection
 	 */
 	public abstract void saveTo(ConfigurationSection config);
 
