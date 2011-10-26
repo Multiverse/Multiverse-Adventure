@@ -29,7 +29,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 	private static MultiverseAdventure instance;
 
 	private static final Logger log = Logger.getLogger("Minecraft");
-    private static final String logPrefix = "[Multiverse-AdventureWorlds] ";
+    private static final String logPrefix = "[Multiverse-Adventure] ";
     protected static DebugLog debugLog;
     private MultiverseCore core;
 
@@ -104,7 +104,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        debugLog = new DebugLog("Multiverse-AdventureWorlds", getDataFolder() + File.separator + "debug.log");
+        debugLog = new DebugLog("Multiverse-Adventure", getDataFolder() + File.separator + "debug.log");
         this.core.incrementPluginCount();
 
         // Register our commands
@@ -215,7 +215,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
 	@Override
 	public String dumpVersionInfo(String buffer) {
-		buffer += logAndAddToPasteBinBuffer("Multiverse-AdventureWorlds Version: " + this.getDescription().getVersion());
+		buffer += logAndAddToPasteBinBuffer("Multiverse-Adventure Version: " + this.getDescription().getVersion());
         buffer += logAndAddToPasteBinBuffer("Bukkit Version: " + this.getServer().getVersion());
         //buffer += logAndAddToPasteBinBuffer("Loaded Portals: " + this.getPortalManager().getAllPortals().size());
         //buffer += logAndAddToPasteBinBuffer("Dumping Portal Values: (version " + this.getPortalsConfig().getString("version", "NOT SET") + ")");
@@ -229,7 +229,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
     private String logAndAddToPasteBinBuffer(String string) {
         this.log(Level.INFO, string);
-        return "[Multiverse-AdventureWorlds] " + string + "\n";
+        return "[Multiverse-Adventure] " + string + "\n";
     }
 
 	@Override
