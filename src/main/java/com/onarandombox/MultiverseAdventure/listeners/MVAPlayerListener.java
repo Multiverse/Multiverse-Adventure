@@ -13,25 +13,25 @@ import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
 public class MVAPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        preHandle(event.getFrom().getName(), event.getPlayer().getWorld().getName());
+        handle(event.getFrom().getName(), event.getPlayer().getWorld().getName());
 	}
 
 	@Override
 	public void onPlayerJoin(PlayerJoinEvent event) {
-        preHandle(null, event.getPlayer().getWorld().getName());
+        handle(null, event.getPlayer().getWorld().getName());
 	}
 
 	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
-        preHandle(event.getPlayer().getWorld().getName(), null);
+        handle(event.getPlayer().getWorld().getName(), null);
 	}
 
 	@Override
 	public void onPlayerKick(PlayerKickEvent event) {
-		preHandle(event.getPlayer().getWorld().getName(), null);
+		handle(event.getPlayer().getWorld().getName(), null);
 	}
 	
-	private void preHandle(String fromWorldName, String toWorldName) {
+	private void handle(String fromWorldName, String toWorldName) {
 		AdventureWorld fromWorld = null;
 		AdventureWorld toWorld = null;
 		
