@@ -5,40 +5,42 @@ import org.bukkit.event.Event;
 
 /**
  * Called when a world is going to be reset. Cancellable.
+ * 
  * @author main()
  */
 public class MVAResetEvent extends Event implements Cancellable {
-	private static final long serialVersionUID = -8202789420260485333L;
-	private boolean cancelled;
-	
-	private final String world;
-	
-	public MVAResetEvent(String worldName) {
-		super("MVAWReset");
-		world = worldName;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isCancelled() {
-		return this.cancelled;
-	}
+    private static final long serialVersionUID = -8202789420260485333L;
+    private boolean cancelled;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setCancelled(boolean cancel) {
-		this.cancelled = cancel;
-	}
+    private final String world;
 
-	/**
-	 * Gets the world that is reset now.
-	 * @return The world.
-	 */
-	public String getWorld() {
-		return world;
-	}
+    public MVAResetEvent(String worldName) {
+        super("MVAWReset");
+        world = worldName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
+    }
+
+    /**
+     * Gets the world that is reset now.
+     * 
+     * @return The world.
+     */
+    public String getWorld() {
+        return world;
+    }
 }

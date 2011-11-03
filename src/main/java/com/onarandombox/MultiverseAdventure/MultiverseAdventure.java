@@ -26,16 +26,16 @@ import com.onarandombox.MultiverseCore.utils.DebugLog;
 import com.pneumaticraft.commandhandler.CommandHandler;
 
 public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
-	private static MultiverseAdventure instance;
+    private static MultiverseAdventure instance;
 
-	private static final Logger log = Logger.getLogger("Minecraft");
+    private static final Logger log = Logger.getLogger("Minecraft");
     private static final String logPrefix = "[Multiverse-Adventure] ";
     protected static DebugLog debugLog;
     private MultiverseCore core;
 
     private CommandHandler commandHandler;
-    
-    //private HashMap<String, MVAdventureWorld> adventureWorlds;
+
+    // private HashMap<String, MVAdventureWorld> adventureWorlds;
     private AdventureWorldsManager manager;
 
     private FileConfiguration MVAConfig;
@@ -44,7 +44,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     public void onLoad() {
         instance = this;
     }
-	
+
     public static void staticLog(Level level, String msg) {
         log.log(level, logPrefix + " " + msg);
         debugLog.log(level, logPrefix + " " + msg);
@@ -54,23 +54,26 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         log.log(level, "[MVAdventure-Debug] " + msg);
         debugLog.log(level, "[MVAdventure-Debug] " + msg);
     }
-    
-	@Override
-	public void log(Level level, String msg) {
-		if (level == Level.FINE && MultiverseCore.GlobalDebug >= 1) {
+
+    @Override
+    public void log(Level level, String msg) {
+        if (level == Level.FINE && MultiverseCore.GlobalDebug >= 1) {
             staticDebugLog(Level.INFO, msg);
-        } else if (level == Level.FINER && MultiverseCore.GlobalDebug >= 2) {
+        }
+        else if (level == Level.FINER && MultiverseCore.GlobalDebug >= 2) {
             staticDebugLog(Level.INFO, msg);
-        } else if (level == Level.FINEST && MultiverseCore.GlobalDebug >= 3) {
+        }
+        else if (level == Level.FINEST && MultiverseCore.GlobalDebug >= 3) {
             staticDebugLog(Level.INFO, msg);
-        } else if (level != Level.FINE && level != Level.FINER && level != Level.FINEST) {
+        }
+        else if (level != Level.FINE && level != Level.FINER && level != Level.FINEST) {
             staticLog(level, msg);
         }
-	}
+    }
 
-	@Override
-	public void onEnable() {
-		this.core = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
+    @Override
+    public void onEnable() {
+        this.core = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
 
         // Test if the Core was found, if not we'll disable this plugin.
         if (this.core == null) {
@@ -87,10 +90,10 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        
+
         this.loadConfig();
-        
-        //this.adventureWorlds = new HashMap<String, MVAdventureWorld>();
+
+        // this.adventureWorlds = new HashMap<String, MVAdventureWorld>();
         manager = new MVAdventureWorldsManager(this, core, MVAConfig);
 
         manager.loadWorlds();
@@ -100,10 +103,11 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         getDataFolder().mkdirs();
         File debugLogFile = new File(getDataFolder(), "debug.log");
         try {
-			debugLogFile.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+            debugLogFile.createNewFile();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
         debugLog = new DebugLog("Multiverse-Adventure", getDataFolder() + File.separator + "debug.log");
         this.core.incrementPluginCount();
 
@@ -114,10 +118,10 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         this.createDefaultPerms();
 
         this.registerEvents();
-	}
-	
-	private void registerEvents() {
-		MVAPluginListener pluginListener = new MVAPluginListener();
+    }
+
+    private void registerEvents() {
+        MVAPluginListener pluginListener = new MVAPluginListener();
         MVAPlayerListener playerListener = new MVAPlayerListener();
         MVAConfigReloadListener customListener = new MVAConfigReloadListener();
         MVAWorldListener worldListener = new MVAWorldListener();
@@ -125,56 +129,57 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         // Register our listeners with the Bukkit Server
         this.getServer().getPluginManager().registerEvent(Type.PLUGIN_ENABLE, pluginListener, Priority.Normal, this);
         this.getServer().getPluginManager().registerEvent(Type.PLUGIN_DISABLE, pluginListener, Priority.Normal, this);
-        
+
         this.getServer().getPluginManager().registerEvent(Type.PLAYER_CHANGED_WORLD, playerListener, Priority.Monitor, this);
         this.getServer().getPluginManager().registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
         this.getServer().getPluginManager().registerEvent(Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
         this.getServer().getPluginManager().registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
-        
+
         this.getServer().getPluginManager().registerEvent(Type.CUSTOM_EVENT, customListener, Priority.Normal, this);
-        
+
         this.getServer().getPluginManager().registerEvent(Type.WORLD_LOAD, worldListener, Priority.Normal, this);
         this.getServer().getPluginManager().registerEvent(Type.WORLD_UNLOAD, worldListener, Priority.Normal, this);
-	}
+    }
 
-	private void loadConfig() {
+    private void loadConfig() {
         this.MVAConfig = this.getConfig();
-	}
-	
-	private void createDefaultPerms() {
-		if (this.getServer().getPluginManager().getPermission("multiverse.adventure.*") == null) {
+    }
+
+    private void createDefaultPerms() {
+        if (this.getServer().getPluginManager().getPermission("multiverse.adventure.*") == null) {
             Permission perm = new Permission("multiverse.adventure.*");
             this.getServer().getPluginManager().addPermission(perm);
         }
-        
-        try {
-			Permission all = this.getServer().getPluginManager().getPermission("multiverse.*");
-			all.getChildren().put("multiverse.adventure.*", true);
-			this.getServer().getPluginManager().recalculatePermissionDefaults(all);
-		} catch (NullPointerException e) {
-			// Because all could be null. multiverse.* is not our stuff so we don't touch it.
-			e.printStackTrace();
-		}
-	}
 
-	private void registerCommands() {
-		this.commandHandler = this.core.getCommandHandler();
-		
-		this.commandHandler.registerCommand(new EnableCommand(this));
+        try {
+            Permission all = this.getServer().getPluginManager().getPermission("multiverse.*");
+            all.getChildren().put("multiverse.adventure.*", true);
+            this.getServer().getPluginManager().recalculatePermissionDefaults(all);
+        }
+        catch (NullPointerException e) {
+            // Because all could be null. multiverse.* is not our stuff so we don't touch it.
+            e.printStackTrace();
+        }
+    }
+
+    private void registerCommands() {
+        this.commandHandler = this.core.getCommandHandler();
+
+        this.commandHandler.registerCommand(new EnableCommand(this));
         this.commandHandler.registerCommand(new DisableCommand(this));
         this.commandHandler.registerCommand(new FlushCommand(this));
         this.commandHandler.registerCommand(new SetTemplateCommand(this));
         this.commandHandler.registerCommand(new ListCommand(this));
-        
+
         for (com.pneumaticraft.commandhandler.Command c : this.commandHandler.getAllCommands()) {
             if (c instanceof HelpCommand) {
                 c.addKey("mva");
             }
         }
-	}
-	
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         if (!this.isEnabled()) {
             sender.sendMessage("This plugin is Disabled!");
             return true;
@@ -183,149 +188,149 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         allArgs.add(0, command.getName());
         return this.commandHandler.locateAndRunCommand(sender, allArgs);
     }
-	
-	/**
+
+    /**
      * Parse the Authors Array into a readable String with ',' and 'and'.
-     *
+     * 
      * @return String containing all the authors formatted correctly with ',' and 'and'.
      */
     private String getAuthors() {
         if (this.getDescription().getAuthors().size() > 1) {
-			String authors = "";
-			for (int i = 0; i < this.getDescription().getAuthors().size(); i++) {
-				if (i == this.getDescription().getAuthors().size() - 1) {
-					authors += " and "
-							+ this.getDescription().getAuthors().get(i);
-				} else {
-					authors += ", " + this.getDescription().getAuthors().get(i);
-				}
-			}
-			return authors.substring(2);
-		}
+            String authors = "";
+            for (int i = 0; i < this.getDescription().getAuthors().size(); i++) {
+                if (i == this.getDescription().getAuthors().size() - 1) {
+                    authors += " and " + this.getDescription().getAuthors().get(i);
+                }
+                else {
+                    authors += ", " + this.getDescription().getAuthors().get(i);
+                }
+            }
+            return authors.substring(2);
+        }
         else {
-        	return this.getDescription().getAuthors().get(0); //in case it's just one author like here
+            return this.getDescription().getAuthors().get(0); // in case it's just one author like here
         }
     }
 
-	@Override
-	public void onDisable() {
-		//save config
-		saveConfig();
-	}
+    @Override
+    public void onDisable() {
+        // save config
+        saveConfig();
+    }
 
-	@Override
-	public String dumpVersionInfo(String buffer) {
-		buffer += logAndAddToPasteBinBuffer("Multiverse-Adventure Version: " + this.getDescription().getVersion());
+    @Override
+    public String dumpVersionInfo(String buffer) {
+        buffer += logAndAddToPasteBinBuffer("Multiverse-Adventure Version: " + this.getDescription().getVersion());
         buffer += logAndAddToPasteBinBuffer("Bukkit Version: " + this.getServer().getVersion());
-        //buffer += logAndAddToPasteBinBuffer("Loaded Portals: " + this.getPortalManager().getAllPortals().size());
-        //buffer += logAndAddToPasteBinBuffer("Dumping Portal Values: (version " + this.getPortalsConfig().getString("version", "NOT SET") + ")");
-        //buffer += logAndAddToPasteBinBuffer(this.getPortalsConfig().getAll() + "");
-        //buffer += logAndAddToPasteBinBuffer("Dumping Config Values: (version " + this.getMainConfig().getString("version", "NOT SET") + ")");
-        //buffer += logAndAddToPasteBinBuffer("wand: " + this.getMainConfig().getString("wand", "NOT SET"));
-        //buffer += logAndAddToPasteBinBuffer("Special Code: FRN001");
+        // buffer += logAndAddToPasteBinBuffer("Loaded Portals: " + this.getPortalManager().getAllPortals().size());
+        // buffer += logAndAddToPasteBinBuffer("Dumping Portal Values: (version " + this.getPortalsConfig().getString("version", "NOT SET") + ")");
+        // buffer += logAndAddToPasteBinBuffer(this.getPortalsConfig().getAll() + "");
+        // buffer += logAndAddToPasteBinBuffer("Dumping Config Values: (version " + this.getMainConfig().getString("version", "NOT SET") + ")");
+        // buffer += logAndAddToPasteBinBuffer("wand: " + this.getMainConfig().getString("wand", "NOT SET"));
+        // buffer += logAndAddToPasteBinBuffer("Special Code: FRN001");
         return buffer;
-	}
-	
+    }
 
     private String logAndAddToPasteBinBuffer(String string) {
         this.log(Level.INFO, string);
         return "[Multiverse-Adventure] " + string + "\n";
     }
 
-	@Override
-	public MultiverseCore getCore() {
-		return this.core;
-	}
+    @Override
+    public MultiverseCore getCore() {
+        return this.core;
+    }
 
-	@Override
-	public void setCore(MultiverseCore core) {
-		this.core = core;
-	}
+    @Override
+    public void setCore(MultiverseCore core) {
+        this.core = core;
+    }
 
-	@Override
-	public int getProtocolVersion() {
-		return 1;
-	}
+    @Override
+    public int getProtocolVersion() {
+        return 1;
+    }
 
-	public void reloadConfigs() {
-		manager.unloadWorlds();
-		this.saveConfig();
-		this.loadConfig();
-		manager.loadWorlds();
-	}
-	
-	public static MultiverseAdventure getInstance() {
-		return instance;
-	}
+    public void reloadConfigs() {
+        manager.unloadWorlds();
+        this.saveConfig();
+        this.loadConfig();
+        manager.loadWorlds();
+    }
 
-	public void saveConfig() {
-		this.getAdventureWorldsManager().saveAllTo(this.MVAConfig.getConfigurationSection("adventure"));
+    public static MultiverseAdventure getInstance() {
+        return instance;
+    }
+
+    public void saveConfig() {
+        this.getAdventureWorldsManager().saveAllTo(this.MVAConfig.getConfigurationSection("adventure"));
         try {
-			this.MVAConfig.save(new File(this.getDataFolder(), "config.yml"));
-		} catch (IOException e) {
-			e.printStackTrace();
-			this.log(Level.SEVERE, "Couldn't write to config.yml! Disabling...");
-			this.getServer().getPluginManager().disablePlugin(this);
-		}
-	}
+            this.MVAConfig.save(new File(this.getDataFolder(), "config.yml"));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            this.log(Level.SEVERE, "Couldn't write to config.yml! Disabling...");
+            this.getServer().getPluginManager().disablePlugin(this);
+        }
+    }
 
-	public AdventureWorldsManager getAdventureWorldsManager() {
-		return manager;
-	}
-	
-	/**
-	 * @deprecated Use the AdventureWorldsManager instead
-	 */
-	@Deprecated
-	public AdventureWorld getMVAInfo(String fromWorldName) {
-		return this.getAdventureWorldsManager().getMVAInfo(fromWorldName);
-	}
+    public AdventureWorldsManager getAdventureWorldsManager() {
+        return manager;
+    }
 
-	/**
-	 * @deprecated Use the AdventureWorldsManager instead
-	 */
-	@Deprecated
-	public void tryEnableWorld(String name) {
-		this.getAdventureWorldsManager().tryEnableWorld(name);
-	}
+    /**
+     * @deprecated Use the AdventureWorldsManager instead
+     */
+    @Deprecated
+    public AdventureWorld getMVAInfo(String fromWorldName) {
+        return this.getAdventureWorldsManager().getMVAInfo(fromWorldName);
+    }
 
-	/**
-	 * @deprecated Use the AdventureWorldsManager instead
-	 */
-	@Deprecated
-	public void tryEnableWorld(String name, boolean noreset) {
-		this.getAdventureWorldsManager().tryEnableWorld(name, noreset);
-	}
+    /**
+     * @deprecated Use the AdventureWorldsManager instead
+     */
+    @Deprecated
+    public void tryEnableWorld(String name) {
+        this.getAdventureWorldsManager().tryEnableWorld(name);
+    }
 
-	/**
-	 * @deprecated Use the AdventureWorldsManager instead
-	 */
-	@Deprecated
-	public void disableWorld(String name) {
-		this.getAdventureWorldsManager().disableWorld(name);
-	}
+    /**
+     * @deprecated Use the AdventureWorldsManager instead
+     */
+    @Deprecated
+    public void tryEnableWorld(String name, boolean noreset) {
+        this.getAdventureWorldsManager().tryEnableWorld(name, noreset);
+    }
 
-	/**
-	 * @deprecated Use the AdventureWorldsManager instead
-	 */
-	@Deprecated
-	public void deleteWorld(String world, CommandSender sender) {
-		this.getAdventureWorldsManager().deleteWorld(world, sender);
-	}
+    /**
+     * @deprecated Use the AdventureWorldsManager instead
+     */
+    @Deprecated
+    public void disableWorld(String name) {
+        this.getAdventureWorldsManager().disableWorld(name);
+    }
 
-	/**
-	 * @deprecated Use the AdventureWorldsManager instead
-	 */
-	@Deprecated
-	public void createWorldWithNotifications(String world, CommandSender sender) {
-		this.getAdventureWorldsManager().createWorldWithNotifications(world, sender);
-	}
+    /**
+     * @deprecated Use the AdventureWorldsManager instead
+     */
+    @Deprecated
+    public void deleteWorld(String world, CommandSender sender) {
+        this.getAdventureWorldsManager().deleteWorld(world, sender);
+    }
 
-	/**
-	 * @deprecated Use the AdventureWorldsManager instead
-	 */
-	@Deprecated
-	public void flushWorld(String world, CommandSender sender) {
-		this.getAdventureWorldsManager().flushWorld(world, sender);
-	}
+    /**
+     * @deprecated Use the AdventureWorldsManager instead
+     */
+    @Deprecated
+    public void createWorldWithNotifications(String world, CommandSender sender) {
+        this.getAdventureWorldsManager().createWorldWithNotifications(world, sender);
+    }
+
+    /**
+     * @deprecated Use the AdventureWorldsManager instead
+     */
+    @Deprecated
+    public void flushWorld(String world, CommandSender sender) {
+        this.getAdventureWorldsManager().flushWorld(world, sender);
+    }
 }
