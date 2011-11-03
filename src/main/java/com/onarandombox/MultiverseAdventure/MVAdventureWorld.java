@@ -351,8 +351,8 @@ public final class MVAdventureWorld implements AdventureWorld {
 			// 2. Remove it
 			File serverFolder = new File(plugin.getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
 			File worldFile = new File(serverFolder, name);
-			boolean deletedWorld = FileUtils.deleteFolder(worldFile);
-			if (!deletedWorld) {
+			FileUtils.deleteFolder(worldFile);
+			if (worldFile.exists()) {
 				//WTF? Couldn't delete it???
 				plugin.log(Level.SEVERE, "Couldn't delete a world!");
 				return; //failed...
@@ -417,7 +417,8 @@ public final class MVAdventureWorld implements AdventureWorld {
 			// 1. Unload
 			plugin.getCore().getMVWorldManager().unloadWorld(getName());
 			// 2. Remove template (if exists)
-			if (!FileUtils.deleteFolder(templateFile)) {
+			FileUtils.deleteFolder(templateFile);
+			if (templateFile.exists()) {
 				//Damn.
 				plugin.log(Level.SEVERE, "TemplateWriter: Couldn't delete the template!");
 				onFail();
