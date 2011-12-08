@@ -368,7 +368,7 @@ public final class MVAdventureWorld implements AdventureWorld {
             }
 
             // Now finish it in the main thread
-            int ret = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new ResetFinisher(name));
+            int ret = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ResetFinisher(name));
             if (ret == -1) // WTF? Scheduling failed???
                 plugin.log(Level.SEVERE, "Couldn't schedule a ResetFinisher!");
         }
