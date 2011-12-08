@@ -7,9 +7,11 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.permissions.Permission;
@@ -26,6 +28,21 @@ import com.onarandombox.MultiverseCore.utils.DebugLog;
 import com.pneumaticraft.commandhandler.CommandHandler;
 
 public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
+
+    private static final boolean blocked;
+    // I know. That's bad.
+    static {
+        boolean fail = false;
+        try {
+            if (!(Bukkit.getServer() instanceof CraftServer)) {
+                throw new NoClassDefFoundError();
+            }
+        } catch (NoClassDefFoundError e1) {
+            fail = true;
+        }
+        blocked = fail;
+    }
+
     private static MultiverseAdventure instance;
 
     private static final Logger log = Logger.getLogger("Minecraft");
@@ -73,6 +90,12 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
     @Override
     public void onEnable() {
+        if (blocked) {
+            log.severe("Currently Multiverse-Adventure only works with CraftBukkit! Sorry! We're working on this.");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         this.core = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
 
         // Test if the Core was found, if not we'll disable this plugin.
@@ -214,6 +237,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
     @Override
     public void onDisable() {
+        if (blocked) return;
         // save config
         saveConfig();
     }

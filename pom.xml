@@ -58,6 +58,16 @@
         </dependency>
         <!-- Bukkit Dependency -->
 
+        <!-- CraftBukkit Dependency (I know. that's bad.) -->
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <!-- End of CraftBukkit Dependency -->
+
         <!-- Start of Multiverse Core Dependency -->
         <dependency>
             <groupId>com.onarandombox.multiversecore</groupId>
