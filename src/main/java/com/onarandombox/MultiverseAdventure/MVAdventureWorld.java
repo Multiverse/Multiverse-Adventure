@@ -77,7 +77,6 @@ public final class MVAdventureWorld implements AdventureWorld {
         config.set("template", this.template);
         config.set("activationdelay", activationdelay);
         config.set("resetdelay", resetdelay);
-        plugin.saveConfig();
     }
 
     /**
