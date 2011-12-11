@@ -1,7 +1,7 @@
 name: Multiverse-Adventure
 main: com.onarandombox.MultiverseAdventure.MultiverseAdventure
 author: main()
-version: 2.1
+version: maven-version-number
 depend: ['Multiverse-Core']
 commands:
   mva:
@@ -36,4 +36,4 @@ commands:
     usage: /<command>
   mvalist:
     description: Generic Multiverse-Adventure Command
-    usage: /<command>  
+    usage: /<command>
