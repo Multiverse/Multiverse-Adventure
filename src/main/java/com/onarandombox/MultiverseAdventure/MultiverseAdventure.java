@@ -96,6 +96,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
             return;
         }
 
+        debugLog = new DebugLog("Multiverse-Adventure", getDataFolder() + File.separator + "debug.log");
         this.core = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
 
         // Test if the Core was found, if not we'll disable this plugin.
@@ -131,7 +132,6 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         catch (IOException e) {
             e.printStackTrace();
         }
-        debugLog = new DebugLog("Multiverse-Adventure", getDataFolder() + File.separator + "debug.log");
         this.core.incrementPluginCount();
 
         // Register our commands
