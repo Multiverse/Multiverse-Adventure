@@ -297,6 +297,11 @@ public final class MVAdventureWorld implements AdventureWorld {
         return id != -1;
     }
 
+    public String toString() {
+        return String.format("MVAdventureWorld@%h [world=%s, template=%s, activationdelay=%s, resetdelay=%s]",
+                hashCode(), world, template, activationdelay, resetdelay);
+    }
+
     /**
      * Prepares the AdventureWorld for the reset and then schedules the actual reset. (SYNC)
      */

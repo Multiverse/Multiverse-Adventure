@@ -147,7 +147,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     private void registerEvents() {
         MVAPluginListener pluginListener = new MVAPluginListener();
         MVAPlayerListener playerListener = new MVAPlayerListener();
-        MVAConfigReloadListener customListener = new MVAConfigReloadListener();
+        MVACoreListener coreListener = new MVACoreListener();
         MVAWorldListener worldListener = new MVAWorldListener();
 
         // Register our listeners with the Bukkit Server
@@ -159,7 +159,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         this.getServer().getPluginManager().registerEvent(Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
         this.getServer().getPluginManager().registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
 
-        this.getServer().getPluginManager().registerEvent(Type.CUSTOM_EVENT, customListener, Priority.Normal, this);
+        this.getServer().getPluginManager().registerEvent(Type.CUSTOM_EVENT, coreListener, Priority.Normal, this);
 
         this.getServer().getPluginManager().registerEvent(Type.WORLD_LOAD, worldListener, Priority.Normal, this);
         this.getServer().getPluginManager().registerEvent(Type.WORLD_UNLOAD, worldListener, Priority.Normal, this);
