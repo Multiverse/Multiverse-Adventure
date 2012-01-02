@@ -96,6 +96,16 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
             return;
         }
 
+        // Turn on Logging
+        log.info(logPrefix + "- Version " + this.getDescription().getVersion() + " Enabled - By " + getAuthors());
+        getDataFolder().mkdirs();
+        File debugLogFile = new File(getDataFolder(), "debug.log");
+        try {
+            debugLogFile.createNewFile();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
         debugLog = new DebugLog("Multiverse-Adventure", getDataFolder() + File.separator + "debug.log");
         this.core = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
 
@@ -122,16 +132,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
         manager.loadWorlds();
 
-        // Turn on Logging and register ourselves with Core
-        log.info(logPrefix + "- Version " + this.getDescription().getVersion() + " Enabled - By " + getAuthors());
-        getDataFolder().mkdirs();
-        File debugLogFile = new File(getDataFolder(), "debug.log");
-        try {
-            debugLogFile.createNewFile();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        // register ourselves with core
         this.core.incrementPluginCount();
 
         // Register our commands
