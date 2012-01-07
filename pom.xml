@@ -132,6 +132,16 @@ and adjust the build number accordingly -->
             <scope>compile</scope>
         </dependency>
         <!-- End of Multiverse Core Dependency -->
+
+        <!-- Multiverse Portals Dependency -->
+        <dependency>
+            <groupId>com.onarandombox.multiverseportals</groupId>
+            <artifactId>Multiverse-Portals</artifactId>
+            <version>2.2</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <!-- End of Multiverse Portals Dependency -->
     </dependencies>
     <distributionManagement>
         <repository>

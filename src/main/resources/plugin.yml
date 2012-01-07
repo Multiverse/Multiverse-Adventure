@@ -3,6 +3,7 @@ main: com.onarandombox.MultiverseAdventure.MultiverseAdventure
 author: main()
 version: maven-version-number
 depend: ['Multiverse-Core']
+softdepend: ['Multiverse-Portals']
 commands:
   mva:
     description: Generic Multiverse-Adventure Command

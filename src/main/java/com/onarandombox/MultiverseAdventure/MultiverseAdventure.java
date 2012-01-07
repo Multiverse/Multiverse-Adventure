@@ -15,6 +15,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
@@ -25,6 +26,7 @@ import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVPlugin;
 import com.onarandombox.MultiverseCore.commands.HelpCommand;
 import com.onarandombox.MultiverseCore.utils.DebugLog;
+import com.onarandombox.MultiversePortals.MultiversePortals;
 import com.pneumaticraft.commandhandler.CommandHandler;
 
 public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
@@ -49,6 +51,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     private static final String logPrefix = "[Multiverse-Adventure] ";
     protected static DebugLog debugLog;
     private MultiverseCore core;
+    private MultiversePortals portals;
 
     private CommandHandler commandHandler;
 
@@ -94,6 +97,13 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
             log.severe("Currently Multiverse-Adventure only works with CraftBukkit! Sorry! We're working on this.");
             this.getServer().getPluginManager().disablePlugin(this);
             return;
+        }
+
+        // Check for portals
+        Plugin portalsPlugin = this.getServer().getPluginManager().getPlugin("Multiverse-Portals");
+        if (portalsPlugin instanceof MultiversePortals) {
+            portals = (MultiversePortals) portalsPlugin;
+            log.info(logPrefix + "Multiverse-Portals was found.");
         }
 
         // Turn on Logging
@@ -142,6 +152,14 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         this.createDefaultPerms();
 
         this.registerEvents();
+    }
+
+    public boolean isPortalsEnabled() {
+        return portals != null;
+    }
+
+    public MultiversePortals getPortals() {
+        return portals;
     }
 
     private void registerEvents() {

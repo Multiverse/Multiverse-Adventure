@@ -397,6 +397,12 @@ public final class MVAdventureWorld implements AdventureWorld {
 
             plugin.log(Level.INFO, "Reset of world '" + name + "' finished.");
 
+            if (plugin.isPortalsEnabled()) {
+                // Reload portals
+                plugin.log(Level.INFO, "Reloading Multiverse-Portals to make it use the changed world.");
+                plugin.getPortals().reloadConfigs();
+            }
+
             // call the event
             plugin.getServer().getPluginManager().callEvent(new MVAResetFinishedEvent(name));
         }
