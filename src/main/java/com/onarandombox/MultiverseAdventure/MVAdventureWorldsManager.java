@@ -1,8 +1,10 @@
 package com.onarandombox.MultiverseAdventure;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
@@ -62,9 +64,10 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
      */
     @Override
     public void unloadWorlds() {
-        for (AdventureWorld world : this.adventureWorlds.values()) {
-            disableWorld(world.getName());
-        }
+        List<String> worldNames = new ArrayList<String>(this.adventureWorlds.keySet());
+        for (String name : worldNames)
+            disableWorld(name);
+
         this.adventureWorlds.clear(); // safety
     }
 
