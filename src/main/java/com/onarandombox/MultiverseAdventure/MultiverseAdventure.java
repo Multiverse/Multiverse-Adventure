@@ -16,6 +16,7 @@ import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
@@ -169,18 +170,11 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         MVAWorldListener worldListener = new MVAWorldListener();
 
         // Register our listeners with the Bukkit Server
-        this.getServer().getPluginManager().registerEvent(Type.PLUGIN_ENABLE, pluginListener, Priority.Normal, this);
-        this.getServer().getPluginManager().registerEvent(Type.PLUGIN_DISABLE, pluginListener, Priority.Normal, this);
-
-        this.getServer().getPluginManager().registerEvent(Type.PLAYER_CHANGED_WORLD, playerListener, Priority.Monitor, this);
-        this.getServer().getPluginManager().registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
-        this.getServer().getPluginManager().registerEvent(Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
-        this.getServer().getPluginManager().registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
-
-        this.getServer().getPluginManager().registerEvent(Type.CUSTOM_EVENT, coreListener, Priority.Normal, this);
-
-        this.getServer().getPluginManager().registerEvent(Type.WORLD_LOAD, worldListener, Priority.Normal, this);
-        this.getServer().getPluginManager().registerEvent(Type.WORLD_UNLOAD, worldListener, Priority.Normal, this);
+        PluginManager pm = this.getServer().getPluginManager();
+        pm.registerEvents(pluginListener, this);
+        pm.registerEvents(playerListener, this);
+        pm.registerEvents(coreListener, this);
+        pm.registerEvents(worldListener, this);
     }
 
     private void loadConfig() {
@@ -233,7 +227,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
     /**
      * Parse the Authors Array into a readable String with ',' and 'and'.
-     * 
+     *
      * @return String containing all the authors formatted correctly with ',' and 'and'.
      */
     private String getAuthors() {

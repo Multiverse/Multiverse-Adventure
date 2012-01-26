@@ -9,17 +9,16 @@ import org.bukkit.event.Event;
 
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 import com.onarandombox.MultiverseAdventure.event.MVAResetFinishedEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-public class MVAResetListener extends CustomEventListener {
+public class MVAResetListener implements Listener {
     private static final HashMap<String, List<Runnable>> resetFinishedTasks = new HashMap<String, List<Runnable>>();
 
-    @Override
-    public void onCustomEvent(Event event) {
-        if (event.getEventName().equals("MVAWResetFinished") && event instanceof MVAResetFinishedEvent) {
-            MVAResetFinishedEvent myevent = (MVAResetFinishedEvent) event;
-            for (Runnable r : resetFinishedTasks.get(myevent.getWorld())) {
-                MultiverseAdventure.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MultiverseAdventure.getInstance(), r);
-            }
+    @EventHandler
+    public void resetFinished(MVAResetFinishedEvent event) {
+        for (Runnable r : resetFinishedTasks.get(event.getWorld())) {
+            MultiverseAdventure.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MultiverseAdventure.getInstance(), r);
         }
     }
 
@@ -27,7 +26,6 @@ public class MVAResetListener extends CustomEventListener {
         if (resetFinishedTasks.get(world) == null) {
             resetFinishedTasks.put(world, new ArrayList<Runnable>());
         }
-
         resetFinishedTasks.get(world).add(task);
     }
 }

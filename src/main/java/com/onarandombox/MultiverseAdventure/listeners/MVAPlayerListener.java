@@ -1,5 +1,8 @@
 package com.onarandombox.MultiverseAdventure.listeners;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
@@ -9,24 +12,24 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
 
-public class MVAPlayerListener extends PlayerListener {
-    @Override
-    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+public class MVAPlayerListener implements Listener {
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void playerChangedWorld(PlayerChangedWorldEvent event) {
         handle(event.getFrom().getName(), event.getPlayer().getWorld().getName());
     }
 
-    @Override
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void playerJoin(PlayerJoinEvent event) {
         handle(null, event.getPlayer().getWorld().getName());
     }
 
-    @Override
-    public void onPlayerQuit(PlayerQuitEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void playerQuit(PlayerQuitEvent event) {
         handle(event.getPlayer().getWorld().getName(), null);
     }
 
-    @Override
-    public void onPlayerKick(PlayerKickEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void playerKick(PlayerKickEvent event) {
         handle(event.getPlayer().getWorld().getName(), null);
     }
 

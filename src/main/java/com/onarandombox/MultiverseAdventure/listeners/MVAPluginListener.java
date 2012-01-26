@@ -2,6 +2,8 @@ package com.onarandombox.MultiverseAdventure.listeners;
 
 import java.util.logging.Level;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
@@ -9,8 +11,9 @@ import org.bukkit.event.server.ServerListener;
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 
-public class MVAPluginListener extends ServerListener {
-    @Override
+public class MVAPluginListener implements Listener {
+
+    @EventHandler
     public void onPluginEnable(PluginEnableEvent event) {
         if (event.getPlugin().getDescription().getName().equals("Multiverse-Core")) {
             MultiverseAdventure.getInstance().setCore(
@@ -26,7 +29,7 @@ public class MVAPluginListener extends ServerListener {
         }
     }
 
-    @Override
+    @EventHandler
     public void onPluginDisable(PluginDisableEvent event) {
         if (event.getPlugin().getDescription().getName().equals("Multiverse-Core")) {
             MultiverseAdventure.getInstance().setCore(null);

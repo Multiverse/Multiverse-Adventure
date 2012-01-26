@@ -5,11 +5,14 @@ import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
 import com.onarandombox.MultiverseCore.event.MVConfigReloadEvent;
 import com.onarandombox.MultiverseCore.event.MVVersionEvent;
 import com.onarandombox.MultiverseCore.listeners.MultiverseCoreListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-public class MVACoreListener extends MultiverseCoreListener {
+public class MVACoreListener implements Listener {
     private MultiverseAdventure plugin = MultiverseAdventure.getInstance();
 
-    public void onVersionRequest(MVVersionEvent event) {
+    @EventHandler
+    public void versionRequest(MVVersionEvent event) {
         StringBuilder buffer = new StringBuilder();
         buffer.append(String.format("[Multiverse-Adventure] Multiverse-Adventure Version: %s", plugin.getDescription().getVersion())).append('\n');
         buffer.append(String.format("[Multiverse-Adventure] Loaded AdventureWorlds: %d", plugin.getAdventureWorldsManager().getMVAWorlds().size()));
@@ -20,7 +23,8 @@ public class MVACoreListener extends MultiverseCoreListener {
         event.appendVersionInfo(buffer.toString());
     }
 
-    public void onMVConfigReload(MVConfigReloadEvent event) {
+    @EventHandler
+    public void configReload(MVConfigReloadEvent event) {
         plugin.reloadConfigs();
         event.addConfig("Multiverse-Adventure - config.yml");
     }

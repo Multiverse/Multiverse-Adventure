@@ -3,17 +3,19 @@ package com.onarandombox.MultiverseAdventure.listeners;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldListener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 
-public class MVAWorldListener extends WorldListener {
+public class MVAWorldListener implements Listener {
     private static final List<String> passes = new ArrayList<String>();
 
-    @Override
-    public void onWorldLoad(WorldLoadEvent event) {
+    @EventHandler
+    public void worldLoad(WorldLoadEvent event) {
         final WorldLoadEvent fevent = event;
         if (!passes.contains(event.getWorld().getName())) {
             MultiverseAdventure.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MultiverseAdventure.getInstance(), new Runnable() {
@@ -34,8 +36,8 @@ public class MVAWorldListener extends WorldListener {
         }
     }
 
-    @Override
-    public void onWorldUnload(WorldUnloadEvent event) {
+    @EventHandler
+    public void worldUnload(WorldUnloadEvent event) {
         MultiverseAdventure.getInstance().getAdventureWorldsManager().disableWorld(event.getWorld().getName());
     }
 
