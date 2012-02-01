@@ -206,6 +206,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         this.commandHandler.registerCommand(new FlushCommand(this));
         this.commandHandler.registerCommand(new SetTemplateCommand(this));
         this.commandHandler.registerCommand(new ListCommand(this));
+        this.commandHandler.registerCommand(new ResetCommand(this));
 
         for (com.pneumaticraft.commandhandler.Command c : this.commandHandler.getAllCommands()) {
             if (c instanceof HelpCommand) {

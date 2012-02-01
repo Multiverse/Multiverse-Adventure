@@ -7,12 +7,6 @@ import org.bukkit.command.CommandSender;
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 import com.pneumaticraft.commandhandler.Command;
 
-/**
- * Convenience class so we don't have to cast each time.
- * 
- * @author fernferret
- * 
- */
 public abstract class BaseCommand extends Command {
     protected MultiverseAdventure plugin;
 
