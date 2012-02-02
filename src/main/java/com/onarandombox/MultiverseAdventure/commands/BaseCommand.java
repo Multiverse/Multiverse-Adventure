@@ -5,7 +5,7 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
-import com.pneumaticraft.commandhandler.Command;
+import com.pneumaticraft.commandhandler.multiverse.Command;
 
 public abstract class BaseCommand extends Command {
     protected MultiverseAdventure plugin;
