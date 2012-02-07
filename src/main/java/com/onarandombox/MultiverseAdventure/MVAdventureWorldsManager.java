@@ -189,7 +189,7 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
             public void run() {
                 getCore().getMVWorldManager().unloadWorld(name);
                 config.set("adventure." + name, null);
-                File serverFolder = new File(plugin.getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
+                File serverFolder = plugin.getServer().getWorldContainer();
                 File templateFile = new File(serverFolder, template);
                 FileUtils.deleteFolder(templateFile);
                 getCore().getMVWorldManager().loadWorld(name);

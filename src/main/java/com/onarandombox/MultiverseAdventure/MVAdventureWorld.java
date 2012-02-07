@@ -354,7 +354,7 @@ public final class MVAdventureWorld implements AdventureWorld {
         @Override
         public void run() {
             // 2. Remove it
-            File serverFolder = new File(plugin.getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
+            File serverFolder = plugin.getServer().getWorldContainer();
             File worldFile = new File(serverFolder, name);
             FileUtils.deleteFolder(worldFile);
             if (worldFile.exists()) {
@@ -421,7 +421,7 @@ public final class MVAdventureWorld implements AdventureWorld {
 
         @Override
         public void run() {
-            File serverFolder = new File(plugin.getDataFolder().getAbsolutePath()).getParentFile().getParentFile();
+            File serverFolder = plugin.getServer().getWorldContainer();
             File worldFile = new File(serverFolder, getName());
             File templateFile = new File(serverFolder, getTemplate());
 
