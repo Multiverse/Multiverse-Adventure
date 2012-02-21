@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.event.CustomEventListener;
 import org.bukkit.event.Event;
 
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;

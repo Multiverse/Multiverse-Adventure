@@ -4,7 +4,7 @@
 
     <groupId>com.onarandombox.multiverseadventure</groupId>
     <artifactId>Multiverse-Adventure</artifactId>
-    <version>2.3</version>
+    <version>2.4</version>
     <packaging>jar</packaging>
     <name>Multiverse-Adventure</name>
     <description>Multiverse Adventure module</description>
@@ -99,7 +99,7 @@ and adjust the build number accordingly -->
                     <replacements>
                         <replacement>
                             <token>maven-version-number</token>
-                            <value>${project.version}-b${project.build.number}</value>
+                            <value>${project.version}-AB</value>
                         </replacement>
                     </replacements>
                 </configuration>
@@ -111,7 +111,7 @@ and adjust the build number accordingly -->
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>1.1-R3</version>
+            <version>1.1-R5-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -121,7 +121,7 @@ and adjust the build number accordingly -->
         <dependency>
             <groupId>com.onarandombox.multiverseportals</groupId>
             <artifactId>Multiverse-Portals</artifactId>
-            <version>2.3</version>
+            <version>2.4</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>

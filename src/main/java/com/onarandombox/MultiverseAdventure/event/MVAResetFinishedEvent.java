@@ -14,7 +14,6 @@ public class MVAResetFinishedEvent extends Event {
     private final String world;
 
     public MVAResetFinishedEvent(String worldName) {
-        super("MVAWResetFinished");
         world = worldName;
     }
 

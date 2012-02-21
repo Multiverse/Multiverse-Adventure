@@ -16,7 +16,6 @@ public class MVAResetEvent extends Event implements Cancellable {
     private final String world;
 
     public MVAResetEvent(String worldName) {
-        super("MVAWReset");
         world = worldName;
     }
 
