@@ -2,9 +2,10 @@ package com.onarandombox.MultiverseAdventure.listeners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-
-import org.bukkit.event.Event;
+import java.util.Set;
+import java.util.logging.Level;
 
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 import com.onarandombox.MultiverseAdventure.event.MVAResetFinishedEvent;
@@ -13,11 +14,24 @@ import org.bukkit.event.Listener;
 
 public class MVAResetListener implements Listener {
     private static final HashMap<String, List<Runnable>> resetFinishedTasks = new HashMap<String, List<Runnable>>();
+    private static final Set<String> worldsInReset = new HashSet<String>();
+
+    private MultiverseAdventure plugin;
+
+    public MVAResetListener(MultiverseAdventure plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void resetFinished(MVAResetFinishedEvent event) {
         for (Runnable r : resetFinishedTasks.get(event.getWorld())) {
             MultiverseAdventure.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MultiverseAdventure.getInstance(), r);
+        }
+        removeResettingWorld(event.getWorld());
+        if (worldsInReset.isEmpty() && plugin.isPortalsEnabled()) {
+            // Reload portals if there are not worlds still resetting.
+            plugin.log(Level.INFO, "Reloading Multiverse-Portals to make it use the changed world(s).");
+            plugin.getPortals().reloadConfigs();
         }
     }
 
@@ -26,5 +40,13 @@ public class MVAResetListener implements Listener {
             resetFinishedTasks.put(world, new ArrayList<Runnable>());
         }
         resetFinishedTasks.get(world).add(task);
+    }
+
+    public static void addResettingWorld(String world) {
+        worldsInReset.add(world);
+    }
+    
+    public static void removeResettingWorld(String world) {
+        worldsInReset.remove(world);
     }
 }

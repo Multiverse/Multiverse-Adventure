@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
+import com.onarandombox.MultiverseAdventure.listeners.MVAResetListener;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -331,13 +332,17 @@ public final class MVAdventureWorld implements AdventureWorld {
             }
 
             // everything is OK, let's start:
+            // Mark this world as resetting
+            MVAResetListener.addResettingWorld(getName());
             // 1. Unload it
             plugin.getCore().getMVWorldManager().unloadWorld(name);
 
             // The Rest is done async
             int ret = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new ResetWorker(name, template));
-            if (ret == -1) // WTF? Scheduling failed???
+            if (ret == -1) {// WTF? Scheduling failed???
                 plugin.log(Level.SEVERE, "Couldn't schedule a ResetWorker!");
+                MVAResetListener.removeResettingWorld(getName());
+            }
         }
 
         public ResetPreparer(AdventureWorld world) {
@@ -361,6 +366,7 @@ public final class MVAdventureWorld implements AdventureWorld {
             if (worldFile.exists()) {
                 // WTF? Couldn't delete it???
                 plugin.log(Level.SEVERE, "Couldn't delete a world!");
+                MVAResetListener.removeResettingWorld(getName());
                 return; // failed...
             }
 
@@ -369,13 +375,16 @@ public final class MVAdventureWorld implements AdventureWorld {
             if (!FileUtils.copyFolder(templateFile, worldFile)) {
                 // Damn.
                 plugin.log(Level.SEVERE, "Couldn't copy a world!");
+                MVAResetListener.removeResettingWorld(getName());
                 return; // failed...
             }
 
             // Now finish it in the main thread
             int ret = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ResetFinisher(name));
-            if (ret == -1) // WTF? Scheduling failed???
+            if (ret == -1) {// WTF? Scheduling failed???
                 plugin.log(Level.SEVERE, "Couldn't schedule a ResetFinisher!");
+                MVAResetListener.removeResettingWorld(getName());
+            }
         }
 
         public ResetWorker(String name, String template) {
@@ -397,12 +406,6 @@ public final class MVAdventureWorld implements AdventureWorld {
             plugin.getCore().getMVWorldManager().loadWorld(name);
 
             plugin.log(Level.INFO, "Reset of world '" + name + "' finished.");
-
-            if (plugin.isPortalsEnabled()) {
-                // Reload portals
-                plugin.log(Level.INFO, "Reloading Multiverse-Portals to make it use the changed world.");
-                plugin.getPortals().reloadConfigs();
-            }
 
             // call the event
             plugin.getServer().getPluginManager().callEvent(new MVAResetFinishedEvent(name));
