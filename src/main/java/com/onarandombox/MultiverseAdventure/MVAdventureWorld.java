@@ -315,6 +315,7 @@ public final class MVAdventureWorld implements AdventureWorld {
 
             // check
             if (!world.getMVWorld().getCBWorld().getPlayers().isEmpty()) {
+                plugin.log(Level.FINE, "Abandoning reset of world '" + name + "' as it is not empty!");
                 // What the...?
                 return;
             }
