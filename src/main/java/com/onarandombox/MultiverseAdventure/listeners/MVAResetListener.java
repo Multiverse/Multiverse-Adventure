@@ -9,6 +9,8 @@ import java.util.logging.Level;
 
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 import com.onarandombox.MultiverseAdventure.event.MVAResetFinishedEvent;
+import com.onarandombox.MultiverseAdventure.event.MVAWorldFinishedReloadingEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -27,9 +29,12 @@ public class MVAResetListener implements Listener {
         for (Runnable r : resetFinishedTasks.get(event.getWorld())) {
             MultiverseAdventure.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MultiverseAdventure.getInstance(), r);
         }
+    }
+
+    @EventHandler
+    public void reloadFinished(MVAWorldFinishedReloadingEvent event) {
         removeResettingWorld(event.getWorld());
         if (worldsInReset.isEmpty() && plugin.isPortalsEnabled()) {
-            // Reload portals if there are not worlds still resetting.
             plugin.log(Level.INFO, "Reloading Multiverse-Portals to make it use the changed world(s).");
             plugin.getPortals().reloadConfigs();
         }
