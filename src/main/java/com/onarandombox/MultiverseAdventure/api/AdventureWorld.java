@@ -79,6 +79,20 @@ public interface AdventureWorld {
     public abstract void setResetDelay(int resetDelay);
 
     /**
+     * Gets whether this world resets on server restarts or not
+     *
+     * @return true if world should reset on restart
+     */
+    public abstract boolean shouldResetOnRestart();
+
+    /**
+     * Sets whether this world resets on server restarts
+     *
+     * @param resetOnRestart Whether to reset on restart.
+     */
+    public abstract void setResetOnRestart(boolean resetOnRestart);
+
+    /**
      * Schedules a reset
      * 
      * @return If the reset was successfully scheduled

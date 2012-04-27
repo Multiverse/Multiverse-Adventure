@@ -100,7 +100,7 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
             boolean enabled = this.config.getBoolean("adventure." + name + ".enabled", true);
             if (enabled) {
                 MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
-                if (!noreset)
+                if (!noreset && mvawi.shouldResetOnRestart())
                     mvawi.resetNow();
                 this.adventureWorlds.put(name, mvawi);
                 return true;

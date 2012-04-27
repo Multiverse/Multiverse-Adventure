@@ -34,6 +34,7 @@ public final class MVAdventureWorld implements AdventureWorld {
     private String template;
     private int activationdelay;
     private int resetdelay;
+    private boolean resetOnRestart;
 
     private int resetTaskId;
     private int activationTaskId;
@@ -49,6 +50,7 @@ public final class MVAdventureWorld implements AdventureWorld {
 
         resetTaskId = -1;
         activationTaskId = -1;
+        resetOnRestart = true;
 
         this.plugin.log(Level.FINER, "A new MVAdventureWorld-Object was created!");
     }
@@ -61,6 +63,7 @@ public final class MVAdventureWorld implements AdventureWorld {
         this.setTemplate(node.getString("template", "NAME.template")); // "NAME" will be replaced with the world's name
         this.setActivationDelay(node.getInt("activationdelay", 10));
         this.setResetDelay(node.getInt("resetdelay", 10));
+        this.setResetOnRestart(node.getBoolean("resetonrestart", true));
         plugin.saveConfig();
 
         resetTaskId = -1;
@@ -78,6 +81,7 @@ public final class MVAdventureWorld implements AdventureWorld {
         config.set("template", this.template);
         config.set("activationdelay", activationdelay);
         config.set("resetdelay", resetdelay);
+        config.set("resetonrestart", resetOnRestart);
     }
 
     /**
@@ -170,6 +174,16 @@ public final class MVAdventureWorld implements AdventureWorld {
     @Override
     public void setResetDelay(int resetDelay) {
         this.resetdelay = resetDelay;
+    }
+
+    @Override
+    public boolean shouldResetOnRestart() {
+        return resetOnRestart;
+    }
+
+    @Override
+    public void setResetOnRestart(boolean resetOnRestart) {
+        this.resetOnRestart = resetOnRestart;
     }
 
     /**
