@@ -1,8 +1,8 @@
 package com.onarandombox.MultiverseAdventure.listeners;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
 import com.onarandombox.MultiverseAdventure.event.MVAResetFinishedEvent;
 import com.onarandombox.MultiverseAdventure.event.MVAWorldFinishedReloadingEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -42,7 +41,7 @@ public class MVAResetListener implements Listener {
 
     public static void addTask(String world, Runnable task) {
         if (resetFinishedTasks.get(world) == null) {
-            resetFinishedTasks.put(world, new ArrayList<Runnable>());
+            resetFinishedTasks.put(world, new LinkedList<Runnable>());
         }
         resetFinishedTasks.get(world).add(task);
     }
