@@ -35,6 +35,7 @@ public final class MVAdventureWorld implements AdventureWorld {
     private int activationdelay;
     private int resetdelay;
     private boolean resetOnRestart;
+    private boolean resetWhenEmpty;
 
     private int resetTaskId;
     private int activationTaskId;
@@ -51,6 +52,7 @@ public final class MVAdventureWorld implements AdventureWorld {
         resetTaskId = -1;
         activationTaskId = -1;
         resetOnRestart = true;
+        resetWhenEmpty = true;
 
         this.plugin.log(Level.FINER, "A new MVAdventureWorld-Object was created!");
     }
@@ -64,6 +66,7 @@ public final class MVAdventureWorld implements AdventureWorld {
         this.setActivationDelay(node.getInt("activationdelay", 10));
         this.setResetDelay(node.getInt("resetdelay", 10));
         this.setResetOnRestart(node.getBoolean("resetonrestart", true));
+        this.setResetWhenEmpty(node.getBoolean("resetwhenempty", true));
         plugin.saveConfig();
 
         resetTaskId = -1;
@@ -82,6 +85,7 @@ public final class MVAdventureWorld implements AdventureWorld {
         config.set("activationdelay", activationdelay);
         config.set("resetdelay", resetdelay);
         config.set("resetonrestart", resetOnRestart);
+        config.set("resetwhenempty", resetWhenEmpty);
     }
 
     /**
@@ -176,14 +180,36 @@ public final class MVAdventureWorld implements AdventureWorld {
         this.resetdelay = resetDelay;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean shouldResetOnRestart() {
         return resetOnRestart;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setResetOnRestart(boolean resetOnRestart) {
         this.resetOnRestart = resetOnRestart;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean shouldResetWhenEmpty() {
+        return resetWhenEmpty;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setResetWhenEmpty(boolean resetWhenEmpty) {
+        this.resetWhenEmpty = resetWhenEmpty;
     }
 
     /**

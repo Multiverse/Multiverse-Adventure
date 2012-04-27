@@ -51,8 +51,10 @@ public class MVAPlayerListener implements Listener {
             if (fromWorld.getMVWorld().getCBWorld().getPlayers().isEmpty()) {
                 // nobody left behind! Was the world even set to active?
                 if (fromWorld.isActive()) {
-                    // it was activated. *sigh* let's reset it...
-                    fromWorld.scheduleReset();
+                    if (fromWorld.shouldResetWhenEmpty()) {
+                        // it was activated and should reset when empty. *sigh* let's reset it...
+                        fromWorld.scheduleReset();
+                    }
                 }
                 else {
                     fromWorld.cancelActivation();

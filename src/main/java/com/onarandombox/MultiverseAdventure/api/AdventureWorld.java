@@ -93,6 +93,20 @@ public interface AdventureWorld {
     public abstract void setResetOnRestart(boolean resetOnRestart);
 
     /**
+     * Gets whether this world resets when no players are left in the world (as long as world is active)
+     *
+     * @return true if world should reset when empty
+     */
+    public abstract boolean shouldResetWhenEmpty();
+
+    /**
+     * Sets whether this world resets when no players are left in the world.
+     *
+     * @param resetWhenEmpty Whether to reset when empty
+     */
+    public abstract void setResetWhenEmpty(boolean resetWhenEmpty);
+
+    /**
      * Schedules a reset
      * 
      * @return If the reset was successfully scheduled
