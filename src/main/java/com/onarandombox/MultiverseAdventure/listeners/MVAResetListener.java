@@ -24,8 +24,11 @@ public class MVAResetListener implements Listener {
 
     @EventHandler
     public void resetFinished(MVAResetFinishedEvent event) {
-        for (Runnable r : resetFinishedTasks.get(event.getWorld())) {
-            MultiverseAdventure.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MultiverseAdventure.getInstance(), r);
+        List<Runnable> tasks = resetFinishedTasks.get(event.getWorld());
+        if (tasks != null) {
+            for (Runnable r : tasks) {
+                MultiverseAdventure.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MultiverseAdventure.getInstance(), r);
+            }
         }
         removeResettingWorld(event.getWorld());
         if (worldsInReset.isEmpty() && plugin.isPortalsEnabled()) {
