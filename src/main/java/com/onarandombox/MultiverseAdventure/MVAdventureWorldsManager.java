@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
-import com.onarandombox.MultiverseAdventure.event.MVAWorldFinishedReloadingEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -205,7 +203,6 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
                 File templateFile = new File(serverFolder, template);
                 FileUtils.deleteFolder(templateFile);
                 getCore().getMVWorldManager().loadWorld(name);
-                Bukkit.getPluginManager().callEvent(new MVAWorldFinishedReloadingEvent(name));
                 // notification
                 if (sender != null)
                     sender.sendMessage("Finished.");
