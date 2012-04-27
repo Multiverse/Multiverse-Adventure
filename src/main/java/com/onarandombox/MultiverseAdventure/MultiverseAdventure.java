@@ -291,7 +291,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         manager.unloadWorlds();
         this.saveConfig();
         this.loadConfig();
-        manager.loadWorlds();
+        manager.loadWorlds(true);
     }
 
     public static MultiverseAdventure getInstance() {

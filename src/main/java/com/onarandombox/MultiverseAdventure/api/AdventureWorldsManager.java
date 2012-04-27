@@ -21,6 +21,12 @@ public interface AdventureWorldsManager {
     public abstract void loadWorlds();
 
     /**
+     * Cycles through all loaded worlds and loads those into MVAW, who are AdventureWorlds.
+     * @param noreset if true, this will NOT reset the worlds.
+     */
+    public void loadWorlds(boolean noreset);
+
+    /**
      * Disables all AdventureWorlds
      */
     public abstract void unloadWorlds();

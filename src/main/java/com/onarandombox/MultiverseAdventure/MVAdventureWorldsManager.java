@@ -55,6 +55,16 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
      * {@inheritDoc}
      */
     @Override
+    public void loadWorlds(boolean noreset) {
+        for (MultiverseWorld world : this.getCore().getMVWorldManager().getMVWorlds()) {
+            tryEnableWorld(world.getName(), noreset);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void loadWorlds() {
         for (MultiverseWorld world : this.getCore().getMVWorldManager().getMVWorlds()) {
             tryEnableWorld(world.getName());
