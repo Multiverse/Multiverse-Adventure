@@ -203,6 +203,8 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
                 File templateFile = new File(serverFolder, template);
                 FileUtils.deleteFolder(templateFile);
                 getCore().getMVWorldManager().loadWorld(name);
+                adventureWorlds.remove(name);
+                plugin.saveConfig();
                 // notification
                 if (sender != null)
                     sender.sendMessage("Finished.");
