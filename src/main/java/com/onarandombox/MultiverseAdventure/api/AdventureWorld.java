@@ -107,6 +107,23 @@ public interface AdventureWorld {
     public abstract void setResetWhenEmpty(boolean resetWhenEmpty);
 
     /**
+     * Gets the cron reset schedule for this world.
+     *
+     * @return the cron reset schedule as a string.  Empty string means no schedule.
+     */
+    public abstract String getCronResetSchedule();
+
+    /**
+     * Sets the cron reset schedule for this world.  Pass an empty string to disable
+     * cron based resets.
+     * Format is (min) (hour) (day of month) (month) (day of week)
+     * Example: '0 0 * * 0'  -  once a week, midnight on sunday.
+     *
+     * @param cronResetSchedule The cron reset schedule as a string.  Empty string disables.
+     */
+    public abstract void setCronResetSchedule(String cronResetSchedule);
+
+    /**
      * Schedules a reset
      * 
      * @return If the reset was successfully scheduled

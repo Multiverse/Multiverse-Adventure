@@ -36,6 +36,7 @@ public final class MVAdventureWorld implements AdventureWorld {
     private int resetdelay;
     private boolean resetOnRestart;
     private boolean resetWhenEmpty;
+    private String cronResetSchedule;
 
     private int resetTaskId;
     private int activationTaskId;
@@ -53,8 +54,10 @@ public final class MVAdventureWorld implements AdventureWorld {
         activationTaskId = -1;
         resetOnRestart = true;
         resetWhenEmpty = true;
+        cronResetSchedule = "";
 
         this.plugin.log(Level.FINER, "A new MVAdventureWorld-Object was created!");
+        initCronScheduler();
     }
 
     public MVAdventureWorld(MultiverseWorld world, MultiverseAdventure plugin, ConfigurationSection node) {
@@ -67,12 +70,19 @@ public final class MVAdventureWorld implements AdventureWorld {
         this.setResetDelay(node.getInt("resetdelay", 10));
         this.setResetOnRestart(node.getBoolean("resetonrestart", true));
         this.setResetWhenEmpty(node.getBoolean("resetwhenempty", true));
+        this.setCronResetSchedule(node.getString("cronresetschedule", ""));
+
         plugin.saveConfig();
 
         resetTaskId = -1;
         activationTaskId = -1;
 
         this.plugin.log(Level.FINER, "A new MVAdventureWorld-Object was created!");
+        initCronScheduler();
+    }
+
+    private void initCronScheduler() {
+
     }
 
     /**
@@ -86,6 +96,7 @@ public final class MVAdventureWorld implements AdventureWorld {
         config.set("resetdelay", resetdelay);
         config.set("resetonrestart", resetOnRestart);
         config.set("resetwhenempty", resetWhenEmpty);
+        config.set("cronresetschedule", cronResetSchedule);
     }
 
     /**
@@ -210,6 +221,16 @@ public final class MVAdventureWorld implements AdventureWorld {
     @Override
     public void setResetWhenEmpty(boolean resetWhenEmpty) {
         this.resetWhenEmpty = resetWhenEmpty;
+    }
+
+    @Override
+    public String getCronResetSchedule() {
+        return cronResetSchedule;
+    }
+
+    @Override
+    public void setCronResetSchedule(String cronResetSchedule) {
+        this.cronResetSchedule = cronResetSchedule;
     }
 
     /**
