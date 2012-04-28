@@ -27,6 +27,11 @@ import com.onarandombox.MultiverseCore.api.MVPlugin;
 import com.onarandombox.MultiverseCore.commands.HelpCommand;
 import com.onarandombox.MultiverseCore.utils.DebugLog;
 import com.onarandombox.MultiversePortals.MultiversePortals;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.core.QuartzScheduler;
+import org.quartz.impl.StdSchedulerFactory;
 
 public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
@@ -53,6 +58,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     private MultiversePortals portals;
 
     private CommandHandler commandHandler;
+    private Scheduler quartzScheduler;
 
     // private HashMap<String, MVAdventureWorld> adventureWorlds;
     private AdventureWorldsManager manager;
@@ -132,6 +138,15 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
             log.severe(logPrefix + "http://bukkit.onarandombox.com/?dir=multiverse-core");
             getServer().getPluginManager().disablePlugin(this);
             return;
+        }
+
+        SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+        try {
+            quartzScheduler = schedulerFactory.getScheduler();
+            quartzScheduler.start();
+        } catch (SchedulerException e) {
+            quartzScheduler = null;
+            log(Level.SEVERE, "Quartz Scheduler could not be started: " + e.getMessage());
         }
 
         this.loadConfig();
@@ -251,6 +266,14 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
     @Override
     public void onDisable() {
+        if (getQuartzScheduler() != null) {
+            try {
+                getQuartzScheduler().shutdown();
+            } catch (SchedulerException e) {
+                log(Level.SEVERE, "Could not shut down Quartz Scheduler!");
+                e.printStackTrace();
+            }
+        }
         if (blocked) return;
         // save config
         saveConfig();
@@ -314,6 +337,10 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
     public AdventureWorldsManager getAdventureWorldsManager() {
         return manager;
+    }
+
+    public Scheduler getQuartzScheduler() {
+        return quartzScheduler;
     }
 
     /**

@@ -117,7 +117,9 @@ and adjust the build number accordingly -->
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>org.quartz-scheduler:Quartz</include>
+                                    <include>org.quartz-scheduler:quartz</include>
+                                    <include>org.slf4j:slf4j-api</include>
+                                    <include>c3p0.c3p0</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
@@ -125,8 +127,15 @@ and adjust the build number accordingly -->
                                     <pattern>org.quartz</pattern>
                                     <shadedPattern>org.quartz.multiverse</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>org.slf4j.multiverse</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.mchange</pattern>
+                                    <shadedPattern>com.mchange.multiverse</shadedPattern>
+                                </relocation>
                             </relocations>
-                            <minimizeJar>true</minimizeJar>
                         </configuration>
                     </execution>
                 </executions>
@@ -159,6 +168,16 @@ and adjust the build number accordingly -->
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>2.1.5</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <!-- End of Multiverse Portals Dependency -->
+
+        <!-- Multiverse Portals Dependency -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.6.1</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>

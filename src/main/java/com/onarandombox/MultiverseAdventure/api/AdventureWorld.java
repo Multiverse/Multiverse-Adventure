@@ -1,10 +1,16 @@
 package com.onarandombox.MultiverseAdventure.api;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 
+import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
 public interface AdventureWorld {
 
@@ -182,5 +188,35 @@ public interface AdventureWorld {
      * @return True if success, false if failed.
      */
     public abstract boolean scheduleWriteTemplate(Callable<Void> onFinish, Callable<Void> onFail);
+
+    public static class CronResetTask implements Runnable {
+
+        private final MultiverseAdventure plugin;
+        private final String world;
+
+        public CronResetTask(final MultiverseAdventure plugin, final String world) {
+            this.plugin = plugin;
+            this.world = world;
+        }
+
+        public void reset() {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this);
+        }
+
+        public void run() {
+            plugin.getAdventureWorldsManager().getMVAInfo(world).resetNow();
+        }
+    }
+
+    public class CronResetJob implements Job
+    {
+        public void execute(JobExecutionContext context)
+                throws JobExecutionException {
+
+            Map dataMap = context.getJobDetail().getJobDataMap();
+            CronResetTask task = (CronResetTask)dataMap.get("cronResetTask");
+            task.reset();
+        }
+    }
 
 }

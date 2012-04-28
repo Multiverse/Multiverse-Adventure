@@ -14,6 +14,16 @@ import com.onarandombox.MultiverseAdventure.event.MVAResetFinishedEvent;
 import com.onarandombox.MultiverseAdventure.listeners.MVAWorldListener;
 import com.onarandombox.MultiverseAdventure.util.FileUtils;
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.ScheduleBuilder;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 
 /**
  * Provides support for "adventure"-worlds
@@ -41,6 +51,8 @@ public final class MVAdventureWorld implements AdventureWorld {
     private int resetTaskId;
     private int activationTaskId;
 
+    private JobKey quartzJobKey = null;
+
     public MVAdventureWorld(MultiverseWorld world, MultiverseAdventure plugin, String template, int activationdelay, int resetdelay) {
         this.world = world;
         this.plugin = plugin;
@@ -57,7 +69,7 @@ public final class MVAdventureWorld implements AdventureWorld {
         cronResetSchedule = "";
 
         this.plugin.log(Level.FINER, "A new MVAdventureWorld-Object was created!");
-        initCronScheduler();
+        this.initCronScheduler();
     }
 
     public MVAdventureWorld(MultiverseWorld world, MultiverseAdventure plugin, ConfigurationSection node) {
@@ -78,11 +90,46 @@ public final class MVAdventureWorld implements AdventureWorld {
         activationTaskId = -1;
 
         this.plugin.log(Level.FINER, "A new MVAdventureWorld-Object was created!");
-        initCronScheduler();
     }
 
     private void initCronScheduler() {
+        if (quartzJobKey == null) {
+            quartzJobKey = new JobKey(getName() + "-reset", "resets");
+        }
+        // Cancel previous job if exists.
+        try {
+            if (plugin.getQuartzScheduler().deleteJob(quartzJobKey)) {
+                plugin.log(Level.FINE, "Deleted previous cron job for " + getName());
+            }
+        } catch (SchedulerException e) {
+            plugin.log(Level.SEVERE, "Could not delete existing cron job for " + getName() + ": " + e.getMessage());
+            return;
+        }
 
+        // Return after job cancel if cron string is empty.
+        if (getCronResetSchedule().isEmpty()) {
+            return;
+        }
+
+        // Create a task for the cron job to run
+        CronResetTask task = new CronResetTask(plugin, this.getName());
+        // Create a job to stash in the scheduler
+        JobDetail job = JobBuilder.newJob(CronResetJob.class)
+                .withIdentity(quartzJobKey).build();
+        job.getJobDataMap().put("cronResetTask", task);
+        // Create the cron trigger for the job
+        Trigger cronTrigger = TriggerBuilder.newTrigger()
+                .withIdentity(getName() + "-crontrigger", "resets")
+                .startNow()
+                .withSchedule(CronScheduleBuilder.cronSchedule("0 " + getCronResetSchedule()))
+                .build();
+
+        try {
+            plugin.log(Level.FINE, "Scheduling reset cron-job for " + getName() + ": " + cronTrigger.toString());
+            plugin.getQuartzScheduler().scheduleJob(job, cronTrigger);
+        } catch (SchedulerException e) {
+            plugin.log(Level.WARNING, "Could not schedule cron job for " + this.getName() + ": " + e.getMessage());
+        }
     }
 
     /**
@@ -231,6 +278,7 @@ public final class MVAdventureWorld implements AdventureWorld {
     @Override
     public void setCronResetSchedule(String cronResetSchedule) {
         this.cronResetSchedule = cronResetSchedule;
+        this.initCronScheduler();
     }
 
     /**
