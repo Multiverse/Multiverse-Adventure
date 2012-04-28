@@ -119,6 +119,7 @@ and adjust the build number accordingly -->
                                 <includes>
                                     <include>org.quartz-scheduler:quartz</include>
                                     <include>org.slf4j:slf4j-api</include>
+                                    <include>org.slf4j:slf4j-jdk14</include>
                                     <include>c3p0.c3p0</include>
                                 </includes>
                             </artifactSet>
