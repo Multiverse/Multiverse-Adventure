@@ -1,37 +1,43 @@
 package com.onarandombox.MultiverseAdventure;
 
+import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
+import com.onarandombox.MultiverseAdventure.api.AdventureWorldsManager;
+import com.onarandombox.MultiverseAdventure.commands.DisableCommand;
+import com.onarandombox.MultiverseAdventure.commands.EnableCommand;
+import com.onarandombox.MultiverseAdventure.commands.FlushCommand;
+import com.onarandombox.MultiverseAdventure.commands.ListCommand;
+import com.onarandombox.MultiverseAdventure.commands.ResetCommand;
+import com.onarandombox.MultiverseAdventure.commands.SetTemplateCommand;
+import com.onarandombox.MultiverseAdventure.listeners.MVACoreListener;
+import com.onarandombox.MultiverseAdventure.listeners.MVAPlayerListener;
+import com.onarandombox.MultiverseAdventure.listeners.MVAPluginListener;
+import com.onarandombox.MultiverseAdventure.listeners.MVAResetListener;
+import com.onarandombox.MultiverseAdventure.listeners.MVAWorldListener;
+import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.onarandombox.MultiverseCore.api.MVPlugin;
+import com.onarandombox.MultiverseCore.commands.HelpCommand;
+import com.onarandombox.MultiverseCore.utils.DebugLog;
+import com.onarandombox.MultiversePortals.MultiversePortals;
+import com.pneumaticraft.commandhandler.multiverse.CommandHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.impl.StdSchedulerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.pneumaticraft.commandhandler.multiverse.CommandHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
-import com.onarandombox.MultiverseAdventure.api.AdventureWorldsManager;
-import com.onarandombox.MultiverseAdventure.commands.*;
-import com.onarandombox.MultiverseAdventure.listeners.*;
-import com.onarandombox.MultiverseCore.MultiverseCore;
-import com.onarandombox.MultiverseCore.api.MVPlugin;
-import com.onarandombox.MultiverseCore.commands.HelpCommand;
-import com.onarandombox.MultiverseCore.utils.DebugLog;
-import com.onarandombox.MultiversePortals.MultiversePortals;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
-import org.quartz.core.QuartzScheduler;
-import org.quartz.impl.StdSchedulerFactory;
 
 public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
@@ -63,7 +69,6 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     // private HashMap<String, MVAdventureWorld> adventureWorlds;
     private AdventureWorldsManager manager;
 
-    private FileConfiguration MVAConfig;
     private final static int requiresProtocol = 13;
 
     public void onLoad() {
@@ -149,10 +154,8 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
             log(Level.SEVERE, "Quartz Scheduler could not be started: " + e.getMessage());
         }
 
-        this.loadConfig();
-
         // this.adventureWorlds = new HashMap<String, MVAdventureWorld>();
-        manager = new MVAdventureWorldsManager(this, core, MVAConfig);
+        manager = new MVAdventureWorldsManager(this, core, getConfig());
 
         manager.loadWorlds();
 
@@ -190,10 +193,6 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         pm.registerEvents(coreListener, this);
         pm.registerEvents(worldListener, this);
         pm.registerEvents(resetListener, this);
-    }
-
-    private void loadConfig() {
-        this.MVAConfig = this.getConfig();
     }
 
     private void createDefaultPerms() {
@@ -315,7 +314,6 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     public void reloadConfigs() {
         manager.unloadWorlds();
         this.saveConfig();
-        this.loadConfig();
         manager.loadWorlds(true);
     }
 
@@ -324,15 +322,8 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     }
 
     public void saveConfig() {
-        this.getAdventureWorldsManager().saveAllTo(this.MVAConfig.getConfigurationSection("adventure"));
-        try {
-            this.MVAConfig.save(new File(this.getDataFolder(), "config.yml"));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            this.log(Level.SEVERE, "Couldn't write to config.yml! Disabling...");
-            this.getServer().getPluginManager().disablePlugin(this);
-        }
+        this.getAdventureWorldsManager().saveAllTo(getConfig().getConfigurationSection("adventure"));
+        super.saveConfig();
     }
 
     public AdventureWorldsManager getAdventureWorldsManager() {

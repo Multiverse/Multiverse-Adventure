@@ -1,5 +1,15 @@
 package com.onarandombox.MultiverseAdventure;
 
+import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
+import com.onarandombox.MultiverseAdventure.api.AdventureWorldsManager;
+import com.onarandombox.MultiverseAdventure.listeners.MVAResetListener;
+import com.onarandombox.MultiverseAdventure.util.FileUtils;
+import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.onarandombox.MultiverseCore.api.MultiverseWorld;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,17 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-
-import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
-import com.onarandombox.MultiverseAdventure.api.AdventureWorldsManager;
-import com.onarandombox.MultiverseAdventure.listeners.MVAResetListener;
-import com.onarandombox.MultiverseAdventure.util.FileUtils;
-import com.onarandombox.MultiverseCore.MultiverseCore;
-import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 
 /**
  * @author main()
@@ -115,6 +114,11 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
     @Override
     public boolean disableWorld(String name) {
         if (this.adventureWorlds.containsKey(name)) {
+            AdventureWorld world = getMVAInfo(name);
+            if (world != null) {
+                // Disable the cron job
+                world.setCronResetSchedule("");
+            }
             this.adventureWorlds.remove(name);
             return true;
         }
@@ -192,6 +196,7 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 
         // reset, unload, modify the config and then load
         this.getCore().getMVWorldManager().removePlayersFromWorld(name); // coming soon
+        this.getMVAInfo(name).setCronResetSchedule("");
         this.getMVAInfo(name).resetNow();
 
         // Now use our task-system to do the rest when the reset is finished.
