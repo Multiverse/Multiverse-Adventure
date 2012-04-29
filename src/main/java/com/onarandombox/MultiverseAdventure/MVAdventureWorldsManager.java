@@ -102,6 +102,7 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
                 if (!noreset && mvawi.shouldResetOnRestart())
                     mvawi.resetNow();
                 this.adventureWorlds.put(name, mvawi);
+                plugin.saveConfig();
                 return true;
             }
         }
@@ -142,6 +143,7 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
         MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
         mvawi.scheduleWriteTemplate();
         this.adventureWorlds.put(name, mvawi);
+        plugin.saveConfig();
         return true;
     }
 
@@ -164,6 +166,7 @@ public class MVAdventureWorldsManager implements AdventureWorldsManager {
 
         ConfigurationSection node = this.config.getConfigurationSection("adventure." + name);
         MVAdventureWorld mvawi = new MVAdventureWorld(mvworld, plugin, node);
+        plugin.saveConfig();
         mvawi.scheduleWriteTemplate(new Callable<Void>() {
             public Void call() throws Exception {
                 sender.sendMessage("Finished.");
