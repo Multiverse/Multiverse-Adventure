@@ -99,7 +99,7 @@ and adjust the build number accordingly -->
                     <replacements>
                         <replacement>
                             <token>maven-version-number</token>
-                            <value>${project.version}-AB</value>
+                            <value>${project.version}-b${project.build.number}</value>
                         </replacement>
                     </replacements>
                 </configuration>
