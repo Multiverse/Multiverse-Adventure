@@ -56,7 +56,7 @@ public class FileUtils extends com.onarandombox.MultiverseCore.utils.FileUtils {
             }
             if (out != null) {
                 try {
-                    in.close();
+                    out.close();
                 } catch (IOException ignore) { }
             }
         }
