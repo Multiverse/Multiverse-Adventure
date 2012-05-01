@@ -1,5 +1,8 @@
 package com.onarandombox.MultiverseAdventure.listeners;
 
+import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
+import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -8,31 +11,30 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
-import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
+import java.util.List;
 
 public class MVAPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerChangedWorld(PlayerChangedWorldEvent event) {
-        handle(event.getFrom().getName(), event.getPlayer().getWorld().getName());
+        handle(event.getFrom().getName(), event.getPlayer().getWorld().getName(), event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerJoin(PlayerJoinEvent event) {
-        handle(null, event.getPlayer().getWorld().getName());
+        handle(null, event.getPlayer().getWorld().getName(), event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerQuit(PlayerQuitEvent event) {
-        handle(event.getPlayer().getWorld().getName(), null);
+        handle(event.getPlayer().getWorld().getName(), null, event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerKick(PlayerKickEvent event) {
-        handle(event.getPlayer().getWorld().getName(), null);
+        handle(event.getPlayer().getWorld().getName(), null, event.getPlayer());
     }
 
-    private void handle(String fromWorldName, String toWorldName) {
+    private void handle(String fromWorldName, String toWorldName, Player player) {
         AdventureWorld fromWorld = null;
         AdventureWorld toWorld = null;
 
@@ -42,13 +44,15 @@ public class MVAPlayerListener implements Listener {
         if (toWorldName != null)
             toWorld = MultiverseAdventure.getInstance().getAdventureWorldsManager().getMVAInfo(toWorldName);
 
-        handle(fromWorld, toWorld);
+        handle(fromWorld, toWorld, player);
     }
 
-    private void handle(AdventureWorld fromWorld, AdventureWorld toWorld) {
+    private void handle(AdventureWorld fromWorld, AdventureWorld toWorld, Player player) {
         if (fromWorld != null) {
             // somebody has left an adventure world ==> check if there's anybody left
-            if (fromWorld.getMVWorld().getCBWorld().getPlayers().isEmpty()) {
+            List<Player> playersInWorld = fromWorld.getMVWorld().getCBWorld().getPlayers();
+            if (playersInWorld.isEmpty()
+                    || (player != null && playersInWorld.size() == 1 && playersInWorld.get(0).equals(player))) {
                 // nobody left behind! Was the world even set to active?
                 if (fromWorld.isActive()) {
                     if (fromWorld.shouldResetWhenEmpty()) {
