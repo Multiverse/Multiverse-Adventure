@@ -1,29 +1,25 @@
 package com.onarandombox.MultiverseAdventure;
 
-import java.io.File;
-import java.util.concurrent.Callable;
-import java.util.logging.Level;
-
-import com.onarandombox.MultiverseAdventure.listeners.MVAResetListener;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
-
 import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
 import com.onarandombox.MultiverseAdventure.event.MVAResetEvent;
 import com.onarandombox.MultiverseAdventure.event.MVAResetFinishedEvent;
+import com.onarandombox.MultiverseAdventure.listeners.MVAResetListener;
 import com.onarandombox.MultiverseAdventure.listeners.MVAWorldListener;
 import com.onarandombox.MultiverseAdventure.util.FileUtils;
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
-import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
-import org.quartz.ScheduleBuilder;
-import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+
+import java.io.File;
+import java.util.concurrent.Callable;
+import java.util.logging.Level;
 
 /**
  * Provides support for "adventure"-worlds
@@ -481,7 +477,7 @@ public final class MVAdventureWorld implements AdventureWorld {
 
             // 3. Copy the new world
             File templateFile = new File(serverFolder, template);
-            if (!FileUtils.copyFolder(templateFile, worldFile)) {
+            if (!FileUtils.copyFolder(templateFile, worldFile, plugin.getLogger())) {
                 // Damn.
                 plugin.log(Level.SEVERE, "Couldn't copy a world!");
                 MVAResetListener.removeResettingWorld(getName());
@@ -549,7 +545,7 @@ public final class MVAdventureWorld implements AdventureWorld {
                 return; // failed...
             }
             // 3. Copy
-            if (!FileUtils.copyFolder(worldFile, templateFile)) {
+            if (!FileUtils.copyFolder(worldFile, templateFile, plugin.getLogger())) {
                 // Damn.
                 plugin.log(Level.SEVERE, "TemplateWriter: Couldn't copy the template!");
                 onFail();

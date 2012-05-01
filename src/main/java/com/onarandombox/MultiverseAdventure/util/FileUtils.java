@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Logger;
 
 public class FileUtils extends com.onarandombox.MultiverseCore.utils.FileUtils {
     /**
@@ -14,7 +15,7 @@ public class FileUtils extends com.onarandombox.MultiverseCore.utils.FileUtils {
      * 
      * @returns if it had success
      */
-    public static boolean copyFolder(File source, File target) {
+    public static boolean copyFolder(File source, File target, Logger log) {
         InputStream in = null;
         OutputStream out = null;
         try {
@@ -26,7 +27,7 @@ public class FileUtils extends com.onarandombox.MultiverseCore.utils.FileUtils {
                 String[] children = source.list();
                 // for (int i=0; i<children.length; i++) {
                 for (String child : children) {
-                    copyFolder(new File(source, child), new File(target, child));
+                    copyFolder(new File(source, child), new File(target, child), log);
                 }
             }
             else {
@@ -42,12 +43,10 @@ public class FileUtils extends com.onarandombox.MultiverseCore.utils.FileUtils {
             return true;
         }
         catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.warning("Exception while copying file: " + e.getMessage());
         }
         catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.warning("Exception while copying file: " + e.getMessage());
         }
         finally {
             if (in != null) {
