@@ -15,6 +15,8 @@ public class FileUtils extends com.onarandombox.MultiverseCore.utils.FileUtils {
      * @returns if it had success
      */
     public static boolean copyFolder(File source, File target) {
+        InputStream in = null;
+        OutputStream out = null;
         try {
             if (source.isDirectory()) {
 
@@ -28,16 +30,14 @@ public class FileUtils extends com.onarandombox.MultiverseCore.utils.FileUtils {
                 }
             }
             else {
-                InputStream in = new FileInputStream(source);
-                OutputStream out = new FileOutputStream(target);
+                in = new FileInputStream(source);
+                out = new FileOutputStream(target);
 
                 byte[] buf = new byte[1024];
                 int len;
                 while ((len = in.read(buf)) > 0) {
                     out.write(buf, 0, len);
                 }
-                in.close();
-                out.close();
             }
             return true;
         }
@@ -48,6 +48,18 @@ public class FileUtils extends com.onarandombox.MultiverseCore.utils.FileUtils {
         catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+        finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignore) { }
+            }
+            if (out != null) {
+                try {
+                    in.close();
+                } catch (IOException ignore) { }
+            }
         }
         return false;
     }
