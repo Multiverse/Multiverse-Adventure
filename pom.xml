@@ -119,7 +119,7 @@ and adjust the build number accordingly -->
                                 <includes>
                                     <include>org.quartz-scheduler:quartz</include>
                                     <include>org.slf4j:slf4j-api</include>
-                                    <include>org.slf4j:slf4j-jdk14</include>
+                                    <include>org.slf4j:slf4j-nop</include>
                                     <include>c3p0.c3p0</include>
                                 </includes>
                             </artifactSet>
@@ -177,7 +177,7 @@ and adjust the build number accordingly -->
         <!-- Multiverse Portals Dependency -->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
+            <artifactId>slf4j-nop</artifactId>
             <version>1.6.1</version>
             <type>jar</type>
             <scope>compile</scope>
