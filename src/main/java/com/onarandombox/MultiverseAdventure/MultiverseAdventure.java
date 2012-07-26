@@ -69,7 +69,7 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     // private HashMap<String, MVAdventureWorld> adventureWorlds;
     private AdventureWorldsManager manager;
 
-    private final static int requiresProtocol = 16;
+    private final static int requiresProtocol = 17;
 
     public void onLoad() {
         instance = this;
