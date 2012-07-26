@@ -1,5 +1,7 @@
 package com.onarandombox.MultiverseAdventure;
 
+import buscript.multiverse.Buscript;
+import buscript.multiverse.StringReplacer;
 import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
 import com.onarandombox.MultiverseAdventure.event.MVAResetEvent;
 import com.onarandombox.MultiverseAdventure.event.MVAResetFinishedEvent;
@@ -43,6 +45,8 @@ public final class MVAdventureWorld implements AdventureWorld {
     private boolean resetOnRestart;
     private boolean resetWhenEmpty;
     private String cronResetSchedule;
+    private String preResetScript;
+    private String postResetScript;
 
     private int resetTaskId;
     private int activationTaskId;
@@ -63,6 +67,8 @@ public final class MVAdventureWorld implements AdventureWorld {
         resetOnRestart = true;
         resetWhenEmpty = true;
         cronResetSchedule = "";
+        preResetScript = "";
+        postResetScript = "";
 
         this.plugin.log(Level.FINER, "A new MVAdventureWorld-Object was created!");
         this.initCronScheduler();
@@ -79,6 +85,8 @@ public final class MVAdventureWorld implements AdventureWorld {
         this.setResetOnRestart(node.getBoolean("resetonrestart", true));
         this.setResetWhenEmpty(node.getBoolean("resetwhenempty", true));
         this.setCronResetSchedule(node.getString("cronresetschedule", ""));
+        this.setPreResetScript(node.getString("preresetscript", ""));
+        this.setPostResetScript(node.getString("postresetscript", ""));
 
         plugin.saveConfig();
 
@@ -140,6 +148,8 @@ public final class MVAdventureWorld implements AdventureWorld {
         config.set("resetonrestart", resetOnRestart);
         config.set("resetwhenempty", resetWhenEmpty);
         config.set("cronresetschedule", cronResetSchedule);
+        config.set("preresetscript", preResetScript);
+        config.set("postresetscript", postResetScript);
     }
 
     /**
@@ -277,6 +287,26 @@ public final class MVAdventureWorld implements AdventureWorld {
         this.initCronScheduler();
     }
 
+    @Override
+    public String getPreResetScript() {
+        return preResetScript;
+    }
+
+    @Override
+    public void setPreResetScript(String preResetScript) {
+        this.preResetScript = preResetScript;
+    }
+
+    @Override
+    public String getPostResetScript() {
+        return postResetScript;
+    }
+
+    @Override
+    public void setPostResetScript(String postResetScript) {
+        this.postResetScript = postResetScript;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -408,6 +438,29 @@ public final class MVAdventureWorld implements AdventureWorld {
                 hashCode(), world, template, activationdelay, resetdelay);
     }
 
+    private class ScriptWorldNameReplacer implements StringReplacer {
+        String worldName;
+
+        ScriptWorldNameReplacer(String name) {
+            worldName = name;
+        }
+
+        @Override
+        public String getRegexString() {
+            return "%worldname%";
+        }
+
+        @Override
+        public String getReplacement() {
+            return worldName;
+        }
+
+        @Override
+        public String getGlobalVarName() {
+            return "worldname";
+        }
+    }
+
     /**
      * Prepares the AdventureWorld for the reset and then schedules the actual reset. (SYNC)
      */
@@ -434,6 +487,20 @@ public final class MVAdventureWorld implements AdventureWorld {
             if (resetEvent.isCancelled()) {
                 plugin.log(Level.INFO, "Reset of world '" + name + "' cancelled.");
                 return;
+            }
+
+            if (!getPreResetScript().isEmpty()) {
+                // Execute pre reset script, if there is one
+                Buscript buscript = plugin.getCore().getScriptAPI();
+                File preResetScript = new File(buscript.getScriptFolder(), getPreResetScript());
+                if (preResetScript.exists()) {
+                    buscript.getGlobalScope().put("world", buscript.getGlobalScope(), getMVWorld());
+                    buscript.registerStringReplacer(new ScriptWorldNameReplacer(getName()));
+                    buscript.executeScript(preResetScript);
+                    buscript.getGlobalScope().put("world", buscript.getGlobalScope(), null);
+                } else {
+                    plugin.log(Level.WARNING, "preresetscript for " + getName() + " does not exist!");
+                }
             }
 
             // everything is OK, let's start:
@@ -509,11 +576,26 @@ public final class MVAdventureWorld implements AdventureWorld {
             // 4. Load the world
             MVAWorldListener.addPass(name);
             plugin.getCore().getMVWorldManager().loadWorld(name);
+            MultiverseWorld world = plugin.getCore().getMVWorldManager().getMVWorld(name);
 
             plugin.log(Level.INFO, "Reset of world '" + name + "' finished.");
 
             // call the event
             plugin.getServer().getPluginManager().callEvent(new MVAResetFinishedEvent(name));
+
+            if (!getPostResetScript().isEmpty()) {
+                // Run post reset script, if exists
+                Buscript buscript = plugin.getCore().getScriptAPI();
+                File postResetScript = new File(buscript.getScriptFolder(), getPostResetScript());
+                if (postResetScript.exists()) {
+                    buscript.getGlobalScope().put("world", buscript.getGlobalScope(), world);
+                    buscript.registerStringReplacer(new ScriptWorldNameReplacer(getName()));
+                    buscript.executeScript(postResetScript);
+                    buscript.getGlobalScope().put("world", buscript.getGlobalScope(), null);
+                } else {
+                    plugin.log(Level.WARNING, "postresetscript for " + getName() + " does not exist!");
+                }
+            }
         }
 
         public ResetFinisher(String name) {

@@ -1,16 +1,15 @@
 package com.onarandombox.MultiverseAdventure.api;
 
-import java.util.Map;
-import java.util.concurrent.Callable;
-
 import com.onarandombox.MultiverseAdventure.MultiverseAdventure;
+import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-
-import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 public interface AdventureWorld {
 
@@ -128,6 +127,34 @@ public interface AdventureWorld {
      * @param cronResetSchedule The cron reset schedule as a string.  Empty string disables.
      */
     public abstract void setCronResetSchedule(String cronResetSchedule);
+
+    /**
+     * Gets the name of buscript script to run prior to reset.
+     *
+     * @return the name of buscript script to run prior to reset.
+     */
+    public String getPreResetScript();
+
+    /**
+     * Sets the name of the buscript script to run before reset.
+     *
+     * @param preResetScript the name of the buscript script to run before reset.
+     */
+    public void setPreResetScript(String preResetScript);
+
+    /**
+     * Gets the name of buscript script to run after reset.
+     *
+     * @return the name of buscript script to run after reset.
+     */
+    public String getPostResetScript();
+
+    /**
+     * Sets the name of the buscript script to run after reset.
+     *
+     * @param postResetScript the name of the buscript script to run after reset.
+     */
+    public void setPostResetScript(String postResetScript);
 
     /**
      * Schedules a reset
