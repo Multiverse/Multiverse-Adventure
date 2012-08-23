@@ -507,7 +507,11 @@ public final class MVAdventureWorld implements AdventureWorld {
             // Mark this world as resetting
             MVAResetListener.addResettingWorld(getName());
             // 1. Unload it
-            plugin.getCore().getMVWorldManager().unloadWorld(name);
+            if (!plugin.getCore().getMVWorldManager().unloadWorld(name)) {
+                plugin.log(Level.FINE, "Abandoning reset of world '" + name + "' as it failed to unload!");
+                MVAResetListener.removeResettingWorld(getName());
+                return;
+            }
 
             // The Rest is done async
             int ret = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new ResetWorker(name, template));
