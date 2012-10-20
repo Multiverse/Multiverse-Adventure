@@ -148,6 +148,7 @@ and adjust the build number accordingly -->
                                     <include>org.slf4j:slf4j-api</include>
                                     <include>org.slf4j:slf4j-nop</include>
                                     <include>c3p0.c3p0</include>
+                                    <include>com.dumptruckman.minecraft:Logging</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
@@ -162,6 +163,15 @@ and adjust the build number accordingly -->
                                 <relocation>
                                     <pattern>com.mchange</pattern>
                                     <shadedPattern>com.mchange.multiverse</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.dumptruckman.minecraft.util.Logging</pattern>
+                                    <shadedPattern>com.onarandombox.MultiverseAdventure.util.MVALogging
+                                    </shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.dumptruckman.minecraft.util.DebugLog</pattern>
+                                    <shadedPattern>com.onarandombox.MultiverseCore.utils.DebugFileLogger</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -210,6 +220,16 @@ and adjust the build number accordingly -->
             <scope>compile</scope>
         </dependency>
         <!-- End of Multiverse Portals Dependency -->
+
+        <!-- Start of Logging Dependency -->
+        <dependency>
+            <groupId>com.dumptruckman.minecraft</groupId>
+            <artifactId>Logging</artifactId>
+            <version>1.0.6</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <!-- End of Logging Dependency -->
     </dependencies>
     <distributionManagement>
         <repository>

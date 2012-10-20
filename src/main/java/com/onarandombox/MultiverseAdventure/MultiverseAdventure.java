@@ -1,5 +1,6 @@
 package com.onarandombox.MultiverseAdventure;
 
+import com.dumptruckman.minecraft.util.Logging;
 import com.onarandombox.MultiverseAdventure.api.AdventureWorld;
 import com.onarandombox.MultiverseAdventure.api.AdventureWorldsManager;
 import com.onarandombox.MultiverseAdventure.commands.DisableCommand;
@@ -16,7 +17,6 @@ import com.onarandombox.MultiverseAdventure.listeners.MVAWorldListener;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVPlugin;
 import com.onarandombox.MultiverseCore.commands.HelpCommand;
-import com.onarandombox.MultiverseCore.utils.DebugLog;
 import com.onarandombox.MultiversePortals.MultiversePortals;
 import com.pneumaticraft.commandhandler.multiverse.CommandHandler;
 import org.bukkit.Bukkit;
@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
@@ -57,9 +56,6 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
     private static MultiverseAdventure instance;
 
-    private static final Logger log = Logger.getLogger("Minecraft");
-    private static final String logPrefix = "[Multiverse-Adventure] ";
-    protected static DebugLog debugLog;
     private MultiverseCore core;
     private MultiversePortals portals;
 
@@ -72,39 +68,27 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     private final static int requiresProtocol = 17;
 
     public void onLoad() {
+        Logging.init(this);
         instance = this;
     }
 
     public static void staticLog(Level level, String msg) {
-        log.log(level, logPrefix + " " + msg);
-        debugLog.log(level, logPrefix + " " + msg);
+        Logging.log(level, msg);
     }
 
     public static void staticDebugLog(Level level, String msg) {
-        log.log(level, "[MVAdventure-Debug] " + msg);
-        debugLog.log(level, "[MVAdventure-Debug] " + msg);
+        Logging.log(level, msg);
     }
 
     @Override
     public void log(Level level, String msg) {
-        if (level == Level.FINE && MultiverseCore.getStaticConfig().getGlobalDebug() >= 1) {
-            staticDebugLog(Level.INFO, msg);
-        }
-        else if (level == Level.FINER && MultiverseCore.getStaticConfig().getGlobalDebug() >= 2) {
-            staticDebugLog(Level.INFO, msg);
-        }
-        else if (level == Level.FINEST && MultiverseCore.getStaticConfig().getGlobalDebug() >= 3) {
-            staticDebugLog(Level.INFO, msg);
-        }
-        else if (level != Level.FINE && level != Level.FINER && level != Level.FINEST) {
-            staticLog(level, msg);
-        }
+        Logging.log(level, msg);
     }
 
     @Override
     public void onEnable() {
         if (blocked) {
-            log.severe("Currently Multiverse-Adventure only works with CraftBukkit! Sorry! We're working on this.");
+            Logging.severe("Currently Multiverse-Adventure only works with CraftBukkit! Sorry! We're working on this.");
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -113,11 +97,11 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         Plugin portalsPlugin = this.getServer().getPluginManager().getPlugin("Multiverse-Portals");
         if (portalsPlugin instanceof MultiversePortals) {
             portals = (MultiversePortals) portalsPlugin;
-            log.info(logPrefix + "Multiverse-Portals was found.");
+            Logging.info("Multiverse-Portals was found.");
         }
 
         // Turn on Logging
-        log.info(logPrefix + "- Version " + this.getDescription().getVersion() + " Enabled - By " + getAuthors());
+        Logging.log(true, Level.INFO, " Enabled - By %s", getAuthors());
         getDataFolder().mkdirs();
         File debugLogFile = new File(getDataFolder(), "debug.log");
         try {
@@ -126,21 +110,20 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         catch (IOException e) {
             e.printStackTrace();
         }
-        debugLog = new DebugLog("Multiverse-Adventure", getDataFolder() + File.separator + "debug.log");
         this.core = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
 
         // Test if the Core was found, if not we'll disable this plugin.
         if (this.core == null) {
-            log.info(logPrefix + "Multiverse-Core not found, will keep looking.");
+            Logging.info("Multiverse-Core not found, will keep looking.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
         if (this.core.getProtocolVersion() < requiresProtocol) {
-            log.severe(logPrefix + "Your Multiverse-Core is OUT OF DATE");
-            log.severe(logPrefix + "This version of AdventureWorlds requires Protocol Level: " + requiresProtocol);
-            log.severe(logPrefix + "Your of Core Protocol Level is: " + this.core.getProtocolVersion());
-            log.severe(logPrefix + "Grab an updated copy at: ");
-            log.severe(logPrefix + "http://bukkit.onarandombox.com/?dir=multiverse-core");
+            Logging.severe("Your Multiverse-Core is OUT OF DATE");
+            Logging.severe("This version of AdventureWorlds requires Protocol Level: " + requiresProtocol);
+            Logging.severe("Your of Core Protocol Level is: " + this.core.getProtocolVersion());
+            Logging.severe("Grab an updated copy at: ");
+            Logging.severe("http://bukkit.onarandombox.com/?dir=multiverse-core");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
