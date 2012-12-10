@@ -22,7 +22,6 @@ import com.pneumaticraft.commandhandler.multiverse.CommandHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -43,15 +42,9 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     private static final boolean blocked;
     // I know. That's bad.
     static {
-        boolean fail = false;
-        try {
-            if (!(Bukkit.getServer() instanceof CraftServer)) {
-                throw new NoClassDefFoundError();
-            }
-        } catch (NoClassDefFoundError e1) {
-            fail = true;
-        }
-        blocked = fail;
+        final File file = new File(Bukkit.getWorldContainer(),
+                Bukkit.getWorlds().get(0).getName() + File.separator + "level.dat");
+        blocked = !(file.exists() && file.isFile());
     }
 
     private static MultiverseAdventure instance;
