@@ -68,15 +68,15 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
     }
 
     public void onLoad() {
-        final File file = new File(Bukkit.getWorldContainer(),
-                Bukkit.getWorlds().get(0).getName() + File.separator + "level.dat");
-        blocked = !(file.exists() && file.isFile());
         Logging.init(this);
         instance = this;
     }
 
     @Override
     public void onEnable() {
+        final File file = new File(Bukkit.getWorldContainer(),
+                Bukkit.getWorlds().get(0).getName() + File.separator + "level.dat");
+        blocked = !(file.exists() && file.isFile());
         if (blocked) {
             Logging.severe("Currently Multiverse-Adventure only works with CraftBukkit! Sorry! We're working on this.");
             this.getServer().getPluginManager().disablePlugin(this);
