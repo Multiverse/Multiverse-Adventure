@@ -39,13 +39,7 @@ import java.util.logging.Level;
 
 public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
-    private static final boolean blocked;
-    // I know. That's bad.
-    static {
-        final File file = new File(Bukkit.getWorldContainer(),
-                Bukkit.getWorlds().get(0).getName() + File.separator + "level.dat");
-        blocked = !(file.exists() && file.isFile());
-    }
+    private static boolean blocked;
 
     private static MultiverseAdventure instance;
 
@@ -60,11 +54,6 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
 
     private final static int requiresProtocol = 17;
 
-    public void onLoad() {
-        Logging.init(this);
-        instance = this;
-    }
-
     public static void staticLog(Level level, String msg) {
         Logging.log(level, msg);
     }
@@ -78,11 +67,20 @@ public class MultiverseAdventure extends JavaPlugin implements MVPlugin {
         Logging.log(level, msg);
     }
 
+    public void onLoad() {
+        final File file = new File(Bukkit.getWorldContainer(),
+                Bukkit.getWorlds().get(0).getName() + File.separator + "level.dat");
+        blocked = !(file.exists() && file.isFile());
+        Logging.init(this);
+        instance = this;
+    }
+
     @Override
     public void onEnable() {
         if (blocked) {
             Logging.severe("Currently Multiverse-Adventure only works with CraftBukkit! Sorry! We're working on this.");
             this.getServer().getPluginManager().disablePlugin(this);
+            Logging.shutdown();
             return;
         }
 
