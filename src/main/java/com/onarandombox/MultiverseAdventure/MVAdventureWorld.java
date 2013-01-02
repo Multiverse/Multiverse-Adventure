@@ -538,8 +538,8 @@ public final class MVAdventureWorld implements AdventureWorld {
             // 2. Remove it
             File serverFolder = plugin.getServer().getWorldContainer();
             File worldFile = new File(serverFolder, name);
-            FileUtils.deleteFolder(worldFile);
-            if (worldFile.exists()) {
+            FileUtils.deleteFolderContents(worldFile);
+            if (worldFile.list().length > 0) {
                 // WTF? Couldn't delete it???
                 plugin.log(Level.SEVERE, "Couldn't delete a world!");
                 MVAResetListener.removeResettingWorld(getName());
