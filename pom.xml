@@ -20,8 +20,8 @@
             <url>http://repo.onarandombox.com/content/groups/public</url>
         </repository>
         <repository>
-            <id>Bukkit Official</id>
-            <url>http://repo.bukkit.org/content/repositories/public</url>
+            <id>spigot</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
     </repositories>
 
