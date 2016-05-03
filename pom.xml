@@ -222,5 +222,9 @@ and adjust the build number accordingly -->
             <id>OnARandomBox</id>
             <url>http://repo.onarandombox.com/content/repositories/multiverse</url>
         </repository>
+        <snapshotRepository>
+            <id>OnARandomBox</id>
+            <url>http://repo.onarandombox.com/content/repositories/multiverse-snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>
