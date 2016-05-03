@@ -4,7 +4,7 @@
 
     <groupId>com.onarandombox.multiverseadventure</groupId>
     <artifactId>Multiverse-Adventure</artifactId>
-    <version>2.5</version>
+    <version>2.5.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Multiverse-Adventure</name>
     <description>Multiverse Adventure module</description>
@@ -181,7 +181,6 @@ and adjust the build number accordingly -->
         </plugins>
     </build>
     <dependencies>
-        <!-- CraftBukkit Dependency (I know. that's bad.) -->
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
@@ -189,19 +188,13 @@ and adjust the build number accordingly -->
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        <!-- End of CraftBukkit Dependency -->
-
-        <!-- Multiverse Portals Dependency -->
         <dependency>
             <groupId>com.onarandombox.multiverseportals</groupId>
             <artifactId>Multiverse-Portals</artifactId>
-            <version>2.5</version>
+            <version>2.5.0-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        <!-- End of Multiverse Portals Dependency -->
-
-        <!-- Multiverse Portals Dependency -->
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
@@ -209,9 +202,6 @@ and adjust the build number accordingly -->
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        <!-- End of Multiverse Portals Dependency -->
-
-        <!-- Multiverse Portals Dependency -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-nop</artifactId>
@@ -219,9 +209,6 @@ and adjust the build number accordingly -->
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        <!-- End of Multiverse Portals Dependency -->
-
-        <!-- Start of Logging Dependency -->
         <dependency>
             <groupId>com.dumptruckman.minecraft</groupId>
             <artifactId>Logging</artifactId>
@@ -229,7 +216,6 @@ and adjust the build number accordingly -->
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        <!-- End of Logging Dependency -->
     </dependencies>
     <distributionManagement>
         <repository>
