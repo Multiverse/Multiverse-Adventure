@@ -166,8 +166,7 @@ and adjust the build number accordingly -->
                                 </relocation>
                                 <relocation>
                                     <pattern>com.dumptruckman.minecraft.util.Logging</pattern>
-                                    <shadedPattern>com.onarandombox.MultiverseAdventure.util.MVALogging
-                                    </shadedPattern>
+                                    <shadedPattern>com.onarandombox.MultiverseAdventure.util.MVALogging</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.dumptruckman.minecraft.util.DebugLog</pattern>
@@ -182,11 +181,10 @@ and adjust the build number accordingly -->
     </build>
     <dependencies>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.4.6-R0.3</version>
-            <type>jar</type>
-            <scope>compile</scope>
+           <groupId>org.spigotmc</groupId>
+           <artifactId>spigot-api</artifactId>
+           <version>1.9-R0.1-SNAPSHOT</version>
+           <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.onarandombox.multiverseportals</groupId>
@@ -212,9 +210,15 @@ and adjust the build number accordingly -->
         <dependency>
             <groupId>com.dumptruckman.minecraft</groupId>
             <artifactId>Logging</artifactId>
-            <version>1.0.6</version>
+            <version>1.0.9</version>
             <type>jar</type>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>craftbukkit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
     <distributionManagement>
